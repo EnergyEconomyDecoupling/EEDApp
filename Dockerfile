@@ -7,7 +7,7 @@ FROM zekemarshall/eed-app-base-image:latest
 RUN apt-get update \
     && apt-get upgrade -y \
     #&& apk add openssh \
-    && apt-get install -y openssh \
+    #&& apt-get install -y openssh \
     && apt-get install -y openssh-server \
     && echo "root:Docker!" | chpasswd
     # && mkdir /run/sshd
