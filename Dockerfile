@@ -3,10 +3,12 @@ FROM zekemarshall/eed-app-base-image:latest
 
 ENV SSH_PASSWD "root:Docker!"
 RUN apt-get update \
-        && apt-get install -y --no-install-recommends dialog \
-        && apt-get update \
-  && apt-get install -y --no-install-recommends openssh-server \
-  && echo "$SSH_PASSWD" | chpasswd
+    && apt-get install -y --no-install-recommends dialog \
+    && apt-get install -y --no-install-recommends openssh-server \
+    && echo "$SSH_PASSWD" | chpasswd \
+    && chmod u+x /init_container.sh
+
+COPY /sshd_config /etc/ssh/
 
 # Copy necessary files
 ## app file
@@ -21,9 +23,8 @@ COPY /reboundtools_doc.Rmd /reboundtools_doc.Rmd
 # Expose port, 2222 port is used for SSH access
 EXPOSE 3838 2222
 
-COPY sshd_config /etc/ssh/
-COPY init_container.sh
-RUN chmod 755 init_container.sh
+#COPY /init_container.sh
+#RUN chmod 755 init_container.sh
 ENTRYPOINT ["init_container.sh"]
 
 # Run app on container start
