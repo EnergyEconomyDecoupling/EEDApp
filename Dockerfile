@@ -6,8 +6,10 @@ FROM zekemarshall/eed-app-base-image:latest
 
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y openssh-server \
+    && apk add openssh \
+    # && apt-get install -y openssh-server \
     && echo "root:Docker!" | chpasswd
+    # && mkdir /run/sshd
 
 # Copy necessary files
 ## app file
@@ -19,8 +21,21 @@ COPY /www /www
 ## ReboundTools documenetation .Rmd file
 COPY /reboundtools_doc.Rmd /reboundtools_doc.Rmd
 
-# Expose port
-EXPOSE 3838
+# Expose port, 2222 port is used for SSH access
+EXPOSE 3838 2222
+
+# Copy sshd_config file
+COPY sshd_config /etc/ssh/
+
+# Start SSH
+# CMD startup.sh
+
+# Copy and configure the ssh_setup file
+RUN mkdir -p /tmp
+COPY ssh_setup.sh /tmp
+RUN chmod +x /tmp/ssh_setup.sh \
+    && (sleep 1;/tmp/ssh_setup.sh 2>&1 > /dev/null)
+
 
 # Run app on container start
 CMD ["R", "-e", "shiny::runApp('app.R', host = '0.0.0.0', port = 3838)"]
