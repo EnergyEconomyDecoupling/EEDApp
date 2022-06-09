@@ -6,3 +6,6 @@ eval $(printenv | sed -n "s/^\([^=]\+\)=\(.*\)$/export \1=\2/p" | sed 's/"/\\\"/
 
 echo "Starting SSH ..."
 service ssh start
+
+echo "Starting R Shiny App ..."
+R -e "shiny::runApp('app.R', host = '0.0.0.0', port = 3838)"
