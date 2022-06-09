@@ -6,7 +6,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends dialog \
     && apt-get install -y --no-install-recommends openssh-server \
     && echo "$SSH_PASSWD" | chpasswd \
-    && chmod u+x /init_container.sh
+    && chmod u+x init_container.sh
 
 COPY /sshd_config /etc/ssh/
 
