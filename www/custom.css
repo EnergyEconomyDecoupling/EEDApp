@@ -1,0 +1,88 @@
+/* 
+
+University of Leeds corporate colour palette:
+  Leeds Green #00502F
+  Leeds Red #C41230
+  Leeds Black #000000
+  Leeds Beige #F6F1E4
+  
+Other colours:
+  Brown (red-brown tone) #A52A2A
+  
+*/
+
+/* Call !important; to attempt to overide default shinydashboard theme and dashboardthemes custom theme */
+
+
+
+/* logo - css currently set in app.R to allow for double line */
+
+/* .skin-blue .main-header .logo {
+                      font-weight: bold;
+                      font-family: "Georgia", Times, "Times New Roman", serif;
+                      font-size: 18px;
+                      background-color: #000000;
+                      color: #FFFFFF;
+                      !important;
+                      } */
+
+
+/* logo when hovered */
+.skin-blue .main-header .logo:hover {
+                      background-color: #000000;
+                      }
+
+/* navbar (rest of the header) */
+.skin-blue .main-header .navbar {
+                      background-color: #000000;
+                      }
+
+/* main sidebar */
+.skin-blue .main-sidebar {
+                      font-weight: normal;
+                      font-family: Verdana, Geneva, sans-serif;;
+                      font-size: 14px;
+                      background-color: #A52A2A;
+                      color: #FFFFFF;
+                      }
+
+/* active selected tab in the sidebarmenu */
+.skin-blue .main-sidebar .sidebar .sidebar-menu .active a{
+                      font-weight: normal;
+                      font-family: Verdana, Geneva, sans-serif;;
+                      font-size: 12px;
+                      background-color: #A52A2A;
+                      color: #FFFFFF;
+                      }
+
+/* other links in the sidebarmenu */
+.skin-blue .main-sidebar .sidebar .sidebar-menu a{
+                      font-weight: normal;
+                      font-family: Verdana, Geneva, sans-serif;;
+                      font-size: 12px;
+                      background-color: #A52A2A;
+                      color: #FFFFFF;
+                      }
+
+/* other links in the sidebarmenu when hovered */
+.skin-blue .main-sidebar .sidebar .sidebar-menu a:hover{
+                      background-color: #A52A2A;
+                      }
+/* toggle button when hovered  */                    
+.skin-blue .main-header .navbar .sidebar-toggle:hover{
+                      background-color: #A52A2A;
+                      }
+/* Altered distance between the boxes, currently 0, NOT WORKING */                         
+[class*="col-lg-"],[class*="col-md-"],
+[class*="col-sm-"],[class*="col-xs-"]{
+    padding-right:1.5 !important;
+    padding-left:1.5 !important;
+}
+
+/* Alter margin between boxes, NOT WORKING */ 
+.box {margin: 5px; !important;}
+
+/* Attempting to position selectInput boxes on top of all other elements */
+.select-dropdown .select-dropdown.form-control{z-index:99999 !important}
+.tab-content {overflow: visible !important;}
+                              

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Zeke Marshall" />
+
+
+<title>PFU-Database Documentation</title>
+
+<script src="datadoctest_files/header-attrs-2.7/header-attrs.js"></script>
+<script src="datadoctest_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="datadoctest_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="datadoctest_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="datadoctest_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="datadoctest_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="datadoctest_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="datadoctest_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="datadoctest_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="datadoctest_files/navigation-1.1/tabsets.js"></script>
+<link href="datadoctest_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="datadoctest_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">PFU-Database Documentation</h1>
+<h4 class="author">Zeke Marshall</h4>
+<h4 class="date">14/10/2020</h4>
+
+</div>
+
+
+<style type="text/css">
+body .main-container {
+  max-width: 3000px !important;
+  width: 1600px !important;
+}
+  body {
+  max-width: 3000px !important;
+}
+</style>
+<div id="introduction" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> Introduction</h1>
+<p>In this document the structure, data sources, underlying code, and methodologies used in the construction of the primary-final-useful (PFU) database are recorded.</p>
+</div>
+<div id="energy-conversion-chain-framework" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> Energy Conversion Chain Framework</h1>
+</div>
+<div id="societal-exergy-analysis" class="section level1" number="3">
+<h1 number="3"><span class="header-section-number">3</span> Societal Exergy Analysis</h1>
+</div>
+<div id="data" class="section level1" number="4">
+<h1 number="4"><span class="header-section-number">4</span> Data</h1>
+</div>
+<div id="final-to-useful-allocations" class="section level1" number="5">
+<h1 number="5"><span class="header-section-number">5</span> Final-to-Useful Allocations</h1>
+<p>Extending the IEA’s World Extended Energy Balance data from the final energy stage to the useful energy stage was achieved through assigning a number of Machine - Useful work product combinations to each unique Final energy carrier - Destination combination. For example, for the United Kingdom of Great Britain and Northern Ireland (GBR), residential electricity consumption was allocated to…..</p>
+<p>ZM: After updating GBR with the newest BEIS ECUK data (22/10/2020) I will insert an image of the relevant section of the GBR FU Analysis spreadsheet.</p>
+<p><img src="datadoctest_files/figure-html/GBRResElec-1.png" width="672" /></p>
+</div>
+<div id="final-to-useful-efficiencies-and-exergy-to-energy-ratios" class="section level1" number="6">
+<h1 number="6"><span class="header-section-number">6</span> Final-to-Useful Efficiencies and Exergy-to-Energy Ratios</h1>
+<div id="framework" class="section level2" number="6.1">
+<h2 number="6.1"><span class="header-section-number">6.1</span> Framework</h2>
+<p>Conventional, Approximate, Exact methodologies</p>
+</div>
+<div id="machine-and-useful-work-products" class="section level2" number="6.2">
+<h2 number="6.2"><span class="header-section-number">6.2</span> Machine and Useful Work Products</h2>
+<div id="electric-lamps---light" class="section level3" number="6.2.1">
+<h3 number="6.2.1"><span class="header-section-number">6.2.1</span> Electric Lamps - Light</h3>
+</div>
+<div id="computers---information-processing" class="section level3" number="6.2.2">
+<h3 number="6.2.2"><span class="header-section-number">6.2.2</span> Computers - Information processing</h3>
+<p>In societal exergy analysis the treatment of the machine-useful work product combination Computer - Information processing has been subject to neglect, with only Ayres <span class="citation">(<a href="#ref-Ayres2005" role="doc-biblioref">Ayres, Ayres, and Pokrovsky 2005</a>)</span> providing data for the final-to-useful efficiency of what he terms “Electronic signal processing.”</p>
+<p>In the PFU-Database we calculate the final-to-useful efficiency by establishing that the maximum efficiency of a computation is determined by the minimum quantity of energy required to erase one bit of information in an irreversible computer as set by the Landauer limit.</p>
+<p>The Landauer limit is expressed in the following equation</p>
+<p><span class="math display">\[
+E = k_{B}Tln2
+\]</span></p>
+<p>Here <span class="math inline">\(k_{B}\)</span> represents the Boltzmann constant, <span class="math inline">\(T\)</span> represents the temperature of the heat sink, or the environmental temperature (termed <span class="math inline">\(T_{0}\)</span> when calculating Carnot efficiencies), and <span class="math inline">\(E\)</span> represents the quantity of energy required to erase one bit of information. In the PFU Database <span class="math inline">\(T_{0}\)</span> is assumed to represent an average room temperature of 20C.</p>
+<p>To calculate the efficiency of a computer we require corresponding performance data, i.e. data for the number of bit operations performed per unit energy, however, such data is rare necessitating an approximate approach. To achieve this we used data provided by Jonathan Koomey et al <span class="citation">(<a href="#ref-koomey2010implications" role="doc-biblioref">Koomey et al. 2010</a>)</span> for “Computations per kWh,” from which Koomey’s Law was established, which states <em>“The electrical efficiency of computation has doubled roughly every year and a half for more than six decades”</em>.</p>
+<p>The performance metric “Computations” is a estimation based on the methodology in Nordhaus <span class="citation">(<a href="#ref-nordhaus2007two" role="doc-biblioref">Nordhaus 2007</a>)</span>, preventing conversion into bit operations per second, consequently we used this trend as an indicator of technological progress, which we then applied to a sample of bit operations per second data points.</p>
+<p>ZM: Utilising this approach yields a single final-to-useful exergy efficiency metric, we need to think about how to separate eta.fu and phi.u.</p>
+</div>
+</div>
+<div id="efficiency-limits" class="section level2" number="6.3">
+<h2 number="6.3"><span class="header-section-number">6.3</span> Efficiency Limits</h2>
+<p>Limits to the final-to-useful efficiencies of machines used in the PFU Database project were compiled from a variety of sources. Table</p>
+</div>
+</div>
+<div id="countries" class="section level1" number="7">
+<h1 number="7"><span class="header-section-number">7</span> Countries</h1>
+</div>
+<div id="r-ecosystem-for-the-pfu-database" class="section level1" number="8">
+<h1 number="8"><span class="header-section-number">8</span> R Ecosystem for the PFU-Database</h1>
+<div id="outline" class="section level2" number="8.1">
+<h2 number="8.1"><span class="header-section-number">8.1</span> Outline</h2>
+</div>
+<div id="ieatools" class="section level2" number="8.2">
+<h2 number="8.2"><span class="header-section-number">8.2</span> IEATools</h2>
+</div>
+<div id="recca" class="section level2" number="8.3">
+<h2 number="8.3"><span class="header-section-number">8.3</span> Recca</h2>
+</div>
+<div id="seapsutworkflow" class="section level2" number="8.4">
+<h2 number="8.4"><span class="header-section-number">8.4</span> SEAPSUTWorkflow</h2>
+</div>
+<div id="pfusetup" class="section level2" number="8.5">
+<h2 number="8.5"><span class="header-section-number">8.5</span> PFUSetup</h2>
+</div>
+<div id="pfuinterface" class="section level2" number="8.6">
+<h2 number="8.6"><span class="header-section-number">8.6</span> PFUInterface</h2>
+</div>
+</div>
+<div id="nomenclature" class="section level1" number="9">
+<h1 number="9"><span class="header-section-number">9</span> Nomenclature</h1>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Ayres2005" class="csl-entry">
+Ayres, Robert U., Leslie W. Ayres, and Vladimir Pokrovsky. 2005. <span>“<span class="nocase">On the efficiency of US electricity usage since 1900</span>.”</span> <em>Energy</em> 30 (7): 1092–1145. <a href="https://doi.org/10.1016/j.energy.2004.07.012">https://doi.org/10.1016/j.energy.2004.07.012</a>.
+</div>
+<div id="ref-koomey2010implications" class="csl-entry">
+Koomey, Jonathan, Stephen Berard, Marla Sanchez, and Henry Wong. 2010. <span>“Implications of Historical Trends in the Electrical Efficiency of Computing.”</span> <em>IEEE Annals of the History of Computing</em> 33 (3): 46–54.
+</div>
+<div id="ref-nordhaus2007two" class="csl-entry">
+Nordhaus, William D. 2007. <span>“Two Centuries of Productivity Growth in Computing.”</span> <em>The Journal of Economic History</em> 67 (1): 128–59.
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML.js";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

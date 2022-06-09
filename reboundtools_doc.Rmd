@@ -1,0 +1,35 @@
+---
+title: "ReboundTools"
+author: "Zeke Marshall"
+date: "17/05/2021" # Sys.Date()
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    mathjax: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_CHTML.js"
+    # keep_md: false
+    self_contained: false
+# bibliography: databasedocumentation.bib
+link-citations: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+
+```{css, echo=FALSE}
+body .main-container {
+  max-width: 3000px !important;
+  width: 1600px !important;
+}
+  body {
+  max-width: 3000px !important;
+}
+```
+    
+# Introduction
+
+
