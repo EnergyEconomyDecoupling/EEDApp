@@ -5,8 +5,7 @@ ENV SSH_PASSWD "root:Docker!"
 RUN apt-get update \
     && apt-get install -y --no-install-recommends dialog \
     && apt-get install -y --no-install-recommends openssh-server \
-    && echo "$SSH_PASSWD" | chpasswd \
-    && chmod u+x /init_container.sh
+    && echo "$SSH_PASSWD" | chpasswd
 
 COPY /sshd_config /etc/ssh/
 
@@ -19,11 +18,12 @@ COPY /App-Modules /App-Modules
 COPY /www /www
 ## ReboundTools documentation .Rmd file
 COPY /reboundtools_doc.Rmd /reboundtools_doc.Rmd
+## /init_container.sh file
+COPY /init_container.sh /init_container.sh
 
 # Expose port, 2222 port is used for SSH access
 EXPOSE 3838 2222
 
-#COPY /init_container.sh /init_container.sh
 ENTRYPOINT ["/init_container.sh"]
 
 # Run app on container start
