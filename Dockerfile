@@ -16,7 +16,7 @@ COPY /app.R /app.R
 ## App modules folder
 COPY /App-Modules /App-Modules
 ## www folder
-COPY /www /app/www
+COPY /www /www
 ## ReboundTools documentation .Rmd file
 COPY /reboundtools_doc.Rmd /reboundtools_doc.Rmd
 ## /init_container.sh file
