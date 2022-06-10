@@ -35,8 +35,8 @@ intro_reboundUI <- function(id) {
             tags$p("Updated renv lockfile"),
             tags$p("MOUNT PATH:/mnt/drakecachefolder/drakecache/.drake"),
             tableOutput(outputId = ns("mount_storage_test1")),
-            tags$p("MOUNT PATH:/mnt/drakecachefolder/.drake"),
-            tableOutput(outputId = ns("mount_storage_test2"))
+            tags$p("MOUNT PATH:/mnt/drakecachefolder/.drake")#,
+            # tableOutput(outputId = ns("mount_storage_test2"))
           )
               )
 }
@@ -49,11 +49,11 @@ intro_rebound <- function(input, output, session){
 
     })
 
-  mount_storage_data_cat2 <- reactive({
-
-    mount_storage_data_cat2 <- mount_storage_data_cat2
-
-  })
+  # mount_storage_data_cat2 <- reactive({
+  #
+  #   mount_storage_data_cat2 <- mount_storage_data_cat2
+  #
+  # })
 
   output$mount_storage_test1 <- renderTable({
 
@@ -64,15 +64,15 @@ intro_rebound <- function(input, output, session){
 
 
   })
-
-  output$mount_storage_test2 <- renderTable({
-
-    mount_storage_test2 <- mount_storage_data_cat2() %>%
-      dplyr::slice(5)
-
-    mount_storage_test2
-
-
-  })
+#
+#   output$mount_storage_test2 <- renderTable({
+#
+#     mount_storage_test2 <- mount_storage_data_cat2() %>%
+#       dplyr::slice(5)
+#
+#     mount_storage_test2
+#
+#
+#   })
 
 }
