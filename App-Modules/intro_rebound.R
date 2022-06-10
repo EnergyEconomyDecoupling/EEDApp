@@ -41,9 +41,7 @@ intro_rebound <- function(input, output, session){
 
   mount_storage_data <- reactive({
 
-    mount_storage_data <- drake::readd(target = "CompletedAllocationTables",
-                                       path = "/mnt/drakecachefolder/drakecache/.drake",
-                                       character_only = TRUE)
+    mount_storage_data <- mount_storage_data_cat
 
     })
 
