@@ -28,4 +28,4 @@ EXPOSE 3838 2222
 #ENTRYPOINT ["/init_container.sh"]
 
 # Run app on container start
-# CMD ["R", "-e", "shiny::runApp('app.R', host = '0.0.0.0', port = 3838)"]
+CMD ["R", "-e", "shiny::runApp('app.R', host = '0.0.0.0', port = 3838)"]

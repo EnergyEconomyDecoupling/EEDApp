@@ -20,6 +20,40 @@ intro_reboundUI <- function(id) {
                      the two examples used in the paper (a Lamp and Car)."),
               tags$p("Github --> Docker Hub --> Azure CD now working!"),
               tags$p("Adding paragraph to trigger new build of app with updated EEDAppBaseImage")
+              ),
+
+          box(
+            width = 4,
+            height = 500,
+            title = "Testing mounted storage",
+            id = "mount_storage_test",
+            closable = FALSE,
+            # status = "warning",
+            solidHeader = FALSE,
+            collapsible = FALSE,
+            enable_sidebar = FALSE,
+            tableOutput(outputId = ns("mount_storage_test"))
+          )
               )
-              )
-        }
+}
+
+intro_rebound <- function(input, output, session){
+
+  mount_storage_data <- reactive({
+
+    mount_storage_data <- drake::readd(target = CompletedAllocationTables,
+                                       path = "/drakecache/.drake") %>%
+      dplyr::slice(5)
+
+    })
+
+  output$mount_storage_test <- renderTable({
+
+    mount_storage_test <- mount_storage_data()
+
+    mount_storage_test
+
+
+  })
+
+}
