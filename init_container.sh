@@ -7,5 +7,5 @@ eval $(printenv | sed -n "s/^\([^=]\+\)=\(.*\)$/export \1=\2/p" | sed 's/"/\\\"/
 echo "Starting SSH ..."
 service ssh start
 
-echo "Starting R Shiny App ..."
+echo "Running start-up command for the R Shiny App 'shiny::runApp('app.R', host = '0.0.0.0', port = 3838)'..."
 R -e "shiny::runApp('app.R', host = '0.0.0.0', port = 3838)"
