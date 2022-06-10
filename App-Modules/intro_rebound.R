@@ -43,36 +43,36 @@ intro_reboundUI <- function(id) {
 
 intro_rebound <- function(input, output, session){
 
-  mount_storage_data_cat1 <- reactive({
-
-    mount_storage_data_cat1 <- mount_storage_data_cat1
-
-    })
-
-  # mount_storage_data_cat2 <- reactive({
+  # mount_storage_data_cat1 <- reactive({
   #
-  #   mount_storage_data_cat2 <- mount_storage_data_cat2
+  #   mount_storage_data_cat1 <- mount_storage_data_cat1
+  #
+  #   })
+
+  mount_storage_data_cat2 <- reactive({
+
+    mount_storage_data_cat2 <- mount_storage_data_cat2
+
+  })
+
+  # output$mount_storage_test1 <- renderTable({
+  #
+  #   mount_storage_test1 <- mount_storage_data_cat1() %>%
+  #     dplyr::slice(5)
+  #
+  #   mount_storage_test1
+  #
   #
   # })
 
-  output$mount_storage_test1 <- renderTable({
+  output$mount_storage_test2 <- renderTable({
 
-    mount_storage_test1 <- mount_storage_data_cat1() %>%
+    mount_storage_test2 <- mount_storage_data_cat2() %>%
       dplyr::slice(5)
 
-    mount_storage_test1
+    mount_storage_test2
 
 
   })
-#
-#   output$mount_storage_test2 <- renderTable({
-#
-#     mount_storage_test2 <- mount_storage_data_cat2() %>%
-#       dplyr::slice(5)
-#
-#     mount_storage_test2
-#
-#
-#   })
 
 }
