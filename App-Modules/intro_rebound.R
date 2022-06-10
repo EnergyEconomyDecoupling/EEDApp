@@ -23,7 +23,7 @@ intro_reboundUI <- function(id) {
               ),
 
           box(
-            width = 4,
+            width = 12,
             height = 500,
             title = "Testing mounted storage",
             id = "mount_storage_test",
@@ -41,15 +41,16 @@ intro_rebound <- function(input, output, session){
 
   mount_storage_data <- reactive({
 
-    mount_storage_data <- drake::readd(target = CompletedAllocationTables,
-                                       path = "/drakecache/.drake") %>%
-      dplyr::slice(5)
+    mount_storage_data <- drake::readd(target = "CompletedAllocationTables",
+                                       path = "/drakecache/.drake",
+                                       character_only = TRUE)
 
     })
 
   output$mount_storage_test <- renderTable({
 
-    mount_storage_test <- mount_storage_data()
+    mount_storage_test <- mount_storage_data() %>%
+      dplyr::slice(5)
 
     mount_storage_test
 
