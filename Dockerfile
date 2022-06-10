@@ -1,14 +1,13 @@
 # Base image
 FROM zekemarshall/eed-app-base-image:latest
-#WORKDIR /app/
 
-#COPY /sshd_config /etc/ssh/
+# Test Section - Add sshd_config
+## Install OpenSSH and set the password for root to "Docker!".
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends dialog \
-    && apt-get install -y --no-install-recommends openssh-server \
-    && echo "root:Docker!" | chpasswd #\
-#    && chmod u+x /app/init_container.sh
+    && apt-get upgrade -y \
+    && apt-get install -y openssh-server \
+    && echo "root:Docker!" | chpasswd
 
 # Copy necessary files
 ## app file
@@ -17,15 +16,11 @@ COPY /app.R /app.R
 COPY /App-Modules /App-Modules
 ## www folder
 COPY /www /www
-## ReboundTools documentation .Rmd file
+## ReboundTools documenetation .Rmd file
 COPY /reboundtools_doc.Rmd /reboundtools_doc.Rmd
-## /init_container.sh file
-#COPY /init_container.sh /init_container.sh
 
-# Expose port, 2222 port is used for SSH access
-EXPOSE 3838 2222
-
-#ENTRYPOINT ["/init_container.sh"]
+# Expose port
+EXPOSE 3838
 
 # Run app on container start
 CMD ["R", "-e", "shiny::runApp('app.R', host = '0.0.0.0', port = 3838)"]
