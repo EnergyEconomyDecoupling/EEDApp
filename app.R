@@ -28,7 +28,7 @@ library(ReboundTools)
 library(MKHthemes)
 
 # Loads shiny modules to get and wrangle data
-
+source("App-Modules/load_data.R", local = TRUE)
 
 # Load main shiny modules
 

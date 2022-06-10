@@ -425,7 +425,7 @@ rebound_dashUI <- function(id) {
       collapsible = FALSE,
       enable_sidebar = FALSE,
       tableOutput(outputId = ns("results_table"))
-    ),
+    )
 
 
 

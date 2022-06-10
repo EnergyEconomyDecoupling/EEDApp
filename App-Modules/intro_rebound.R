@@ -20,6 +20,58 @@ intro_reboundUI <- function(id) {
                      the two examples used in the paper (a Lamp and Car)."),
               tags$p("Github --> Docker Hub --> Azure CD now working!"),
               tags$p("Adding paragraph to trigger new build of app with updated EEDAppBaseImage")
+              ),
+
+          box(
+            width = 12,
+            height = 500,
+            title = "Testing mounted storage",
+            id = "mount_storage_test",
+            closable = FALSE,
+            # status = "warning",
+            solidHeader = FALSE,
+            collapsible = FALSE,
+            enable_sidebar = FALSE,
+            tags$p("MOUNT PATH:/mnt/drakecachefolder/drakecache/.drake"),
+            tableOutput(outputId = ns("mount_storage_test1")),
+            tags$p("MOUNT PATH:/mnt/drakecachefolder/.drake"),
+            tableOutput(outputId = ns("mount_storage_test2"))
+          )
               )
-              )
-        }
+}
+
+intro_rebound <- function(input, output, session){
+
+  mount_storage_data_cat1 <- reactive({
+
+    mount_storage_data_cat1 <- mount_storage_data_cat1
+
+    })
+
+  mount_storage_data_cat2 <- reactive({
+
+    mount_storage_data_cat2 <- mount_storage_data_cat2
+
+  })
+
+  output$mount_storage_test1 <- renderTable({
+
+    mount_storage_test1 <- mount_storage_data_cat1() %>%
+      dplyr::slice(5)
+
+    mount_storage_test1
+
+
+  })
+
+  output$mount_storage_test2 <- renderTable({
+
+    mount_storage_test2 <- mount_storage_data_cat2() %>%
+      dplyr::slice(5)
+
+    mount_storage_test2
+
+
+  })
+
+}

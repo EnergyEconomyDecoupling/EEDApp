@@ -1,13 +1,14 @@
 # Base image
 FROM zekemarshall/eed-app-base-image:latest
 
-# Test Section - Add sshd_config
-## Install OpenSSH and set the password for root to "Docker!".
-
+# Expose port
+# Add additional packages to enable debugging and monitoring
 RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get install -y openssh-server \
-    && echo "root:Docker!" | chpasswd
+    && apt-get install --yes --no-install-recommends openssh-server curl vim less \
+    && apt-get clean
+
+# Set the root password to a standard value, to enable SSH from Azure
+RUN echo "root:Docker!" | chpasswd
 
 # Copy necessary files
 ## app file
@@ -19,8 +20,9 @@ COPY /www /www
 ## ReboundTools documenetation .Rmd file
 COPY /reboundtools_doc.Rmd /reboundtools_doc.Rmd
 
-# Expose port
-EXPOSE 3838
+# Copy setup files for SSH
+COPY sshd_config /etc/ssh/sshd_config
+COPY init_container.sh /etc/services.d/sshd/run
 
-# Run app on container start
-CMD ["R", "-e", "shiny::runApp('app.R', host = '0.0.0.0', port = 3838)"]
+# Expose SSH and Shiny ports
+EXPOSE 2222 3838
