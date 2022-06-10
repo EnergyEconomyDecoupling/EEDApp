@@ -8,4 +8,4 @@ echo "Starting SSH ..."
 service ssh start
 
 echo "Running start-up command for the R Shiny App 'shiny::runApp('app.R', host = '0.0.0.0', port = 3838)'..."
-R -e "shiny::runApp('app.R', host = '0.0.0.0', port = 3838)"
+R -e "shiny::runApp('/app/app.R', host = '0.0.0.0', port = 3838)"
