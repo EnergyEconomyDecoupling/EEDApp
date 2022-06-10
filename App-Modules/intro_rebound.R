@@ -32,9 +32,9 @@ intro_reboundUI <- function(id) {
             solidHeader = FALSE,
             collapsible = FALSE,
             enable_sidebar = FALSE,
-            tags$h3("MOUNT PATH:/mnt/drakecachefolder/drakecache/.drake"),
+            tags$p("MOUNT PATH:/mnt/drakecachefolder/drakecache/.drake"),
             tableOutput(outputId = ns("mount_storage_test1")),
-            tags$h3("MOUNT PATH:/mnt/drakecachefolder/.drake"),
+            tags$p("MOUNT PATH:/mnt/drakecachefolder/.drake"),
             tableOutput(outputId = ns("mount_storage_test2"))
           )
               )
