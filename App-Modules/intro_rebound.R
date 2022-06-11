@@ -33,10 +33,11 @@ intro_reboundUI <- function(id) {
             collapsible = FALSE,
             enable_sidebar = FALSE,
             tags$p("Updated renv lockfile"),
-            tags$p("MOUNT PATH:/mnt/drakecachefolder/drakecache/.drake"),
+            tags$p("MOUNT PATH:/mnt/.drake"),
+            tags$p("Table"),
             tableOutput(outputId = ns("mount_storage_test")),
-            tags$p("MOUNT PATH:/mnt/drakecachefolder/.drake")#,
-            # tableOutput(outputId = ns("mount_storage_test2"))
+            tags$p("Head Text"),
+            verbatimTextOutput(outputId = ns("mount_storage_test_head"))
           )
               )
 }
@@ -60,5 +61,11 @@ intro_rebound <- function(input, output, session){
 
 
   })
+
+  output$mount_storage_test_head <- renderPrint(
+
+    head(mount_storage_data_cat)
+
+  )
 
 }
