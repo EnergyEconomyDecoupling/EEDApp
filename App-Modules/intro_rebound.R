@@ -32,7 +32,6 @@ intro_reboundUI <- function(id) {
             solidHeader = FALSE,
             collapsible = FALSE,
             enable_sidebar = FALSE,
-            tags$p("Updated renv lockfile"),
             tags$p("MOUNT PATH:/mnt/.drake"),
             tags$p("Table"),
             tableOutput(outputId = ns("mount_storage_test")),
