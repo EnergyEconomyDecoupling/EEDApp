@@ -219,6 +219,9 @@ server <- function(input, output, session) {
 
   # Calls rebound introduction module
 
+  callModule(module = intro_rebound,
+             id = "intro3")
+
   # Calls rebound dashboard module
 
   callModule(module = rebound_dash,
