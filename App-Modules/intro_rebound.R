@@ -32,7 +32,7 @@ intro_reboundUI <- function(id) {
             solidHeader = FALSE,
             collapsible = FALSE,
             enable_sidebar = FALSE,
-            tags$p("Successfully updated app #2"),
+            tags$p("Now calling intro module"),
             tags$p("MOUNT PATH:/mnt/.drake"),
             tags$p("Table"),
             tableOutput(outputId = ns("mount_storage_test_table")),
