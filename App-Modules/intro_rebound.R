@@ -30,9 +30,6 @@ intro_reboundUI <- function(id) {
             solidHeader = FALSE,
             collapsible = FALSE,
             enable_sidebar = FALSE,
-            tags$p("MOUNT PATH:/mnt/.drake"),
-            tags$p("Head Text"),
-            verbatimTextOutput(outputId = ns("mount_storage_test_head")),
             verbatimTextOutput(outputId = ns("PSUT_Agg_Re_all_St_pfu_head"))
           )
               )
@@ -40,12 +37,6 @@ intro_reboundUI <- function(id) {
 
 intro_rebound <- function(input, output, session){
 
-
-  output$mount_storage_test_head <- renderPrint(
-
-    head(mount_storage_data_cat)
-
-  )
 
   output$PSUT_Agg_Re_all_St_pfu_head <- renderPrint(
 

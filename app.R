@@ -29,6 +29,7 @@ library(MKHthemes)
 
 # Loads shiny modules to get and wrangle data
 source("App-Modules/load_data.R", local = TRUE)
+source("App-Modules/prepare_data.R", local = TRUE)
 
 # Load main shiny modules
 
@@ -36,6 +37,8 @@ source("App-Modules/outline.R", local = TRUE)
 source("App-Modules/relresources.R", local = TRUE)
 
 # Load PFU modules
+source("App-Modules/intro_pfu.R", local = TRUE)
+source("App-Modules/sum_dash_pfu.R", local = TRUE)
 
 
 # Load Energy-Economy modules
@@ -48,12 +51,13 @@ source("App-Modules/reboundtools_rebound.R", local = TRUE)
 source("App-Modules/citation_rebound.R", local = TRUE)
 
 # Loads bespoke functions for use in the app
-
+source("App-Modules/utility_functions.R", local = TRUE)
 
 # Loads custom theme
 source("App-Modules/customTheme.R", local = TRUE)
 
 # Loads cicerone guides
+source("App-Modules/guides_pfu.R", local = TRUE)
 
 # Load bespoke functions
 source("App-Modules/functions.R", local = TRUE)
@@ -127,6 +131,26 @@ ui = dashboardPage(
 
                 menuItem("Outline", tabName = "outline", icon = icon("chalkboard-teacher fa-fw")),
 
+                menuItem("PFU Database", expandedName = "pfu_menu", icon = icon("battery-quarter"),
+
+                         menuItem("Introduction", tabName = "intro_pfu", icon = icon("book-reader")),
+
+                         menuItem("PFU Dashboard", tabName = "dashboard_pfu", icon = icon("dashboard"))#,
+
+                         # menuItem("Final-to-useful Allocations", tabName = "allocations", icon = icon("chart-pie")),
+                         #
+                         # menuItem("Final-to-useful Efficiencies", tabName = "eta", icon = icon("chart-line")),
+                         #
+                         # menuItem("PFU Consumption", tabName = "consumption", icon = icon("lightbulb")),
+                         #
+                         # menuItem("Energy Conversion Chain", tabName = "sankey", icon = icon("project-diagram")),
+                         #
+                         # menuItem("Database documentation", tabName = "documentation", icon = icon("book")),
+                         #
+                         # menuItem("Citation", tabName = "citation_pfu", icon = icon("user-graduate"))
+
+                ),
+
                 menuItem("Rebound", expandedName = "rebound", icon = icon("compress-alt fa-fw"),
 
                          menuItem("Introduction", tabName = "intro_rebound", icon = icon("book-reader fa-fw")),
@@ -164,6 +188,28 @@ ui = dashboardPage(
       # General
       tabItem(tabName = "outline",
               outlineUI(id = "outline1")),
+
+      # PFU-Database items
+      tabItem(tabName = "intro_pfu",
+              intro_pfuUI(id = "intro2")),
+
+      tabItem(tabName = "dashboard_pfu",
+              sumdashplotsUI(id = "dash1")),
+
+      # tabItem(tabName = "sankey",
+      #         eccUI(id = "ecc1")),
+      #
+      # tabItem(tabName = "allocations",
+      #         allocplotsUI(id = "allocations1")),
+      #
+      # tabItem(tabName = "eta",
+      #         etaplotsUI(id = "eta1")),
+      #
+      # tabItem(tabName = "consumption",
+      #         consumptionUI(id = "consumption1")),
+      #
+      # tabItem(tabName = "documentation",
+      #         documentationUI(id = "doc1")),
 
 
       ## Rebound modules - UI
@@ -208,12 +254,32 @@ server <- function(input, output, session) {
 # Call guides
 ################################################################################
 
+  # Triggers PFU Database guide when childless menuItem is opened
+  observeEvent(input$sidebarItemExpanded, {
+    req(input$sidebarItemExpanded)
+    if (input$sidebarItemExpanded == "pfu_menu") {
+      guide_pfu$start()
+    }
+  })
 
+  # Initialise guide_pfu_dash, but do not start automatically
+  guide_pfu_dash$
+    init()
 
 
 ################################################################################
 # Call server-side module components
 ################################################################################
+
+  ## PFU-Database modules
+
+  # Calls sum_dash_pfu.R module
+  callModule(module = sumdashplots,
+             id = "dash1",
+             PSUT_etas,
+             PSUT_metrics_total,
+             GDP_metrics)
+
 
   ## Rebound modules
 
