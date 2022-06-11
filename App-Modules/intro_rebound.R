@@ -24,7 +24,7 @@ intro_reboundUI <- function(id) {
 
           box(
             width = 12,
-            height = 500,
+            height = 1200,
             title = "Testing mounted storage",
             id = "mount_storage_test_box",
             closable = FALSE,
