@@ -26,15 +26,16 @@ intro_reboundUI <- function(id) {
             width = 12,
             height = 500,
             title = "Testing mounted storage",
-            id = "mount_storage_test",
+            id = "mount_storage_test_box",
             closable = FALSE,
             # status = "warning",
             solidHeader = FALSE,
             collapsible = FALSE,
             enable_sidebar = FALSE,
+            tags$p("Successfully updated app #1"),
             tags$p("MOUNT PATH:/mnt/.drake"),
             tags$p("Table"),
-            tableOutput(outputId = ns("mount_storage_test")),
+            tableOutput(outputId = ns("mount_storage_test_table")),
             tags$p("Head Text"),
             verbatimTextOutput(outputId = ns("mount_storage_test_head"))
           )
@@ -44,17 +45,16 @@ intro_reboundUI <- function(id) {
 intro_rebound <- function(input, output, session){
 
 
-  mount_storage_data_cat <- reactive({
+  # mount_storage_data_cat <- reactive({
+  #
+  #   mount_storage_data_cat <- mount_storage_data_cat
+  #
+  # })
 
-    mount_storage_data_cat <- mount_storage_data_cat
 
-  })
+  output$mount_storage_test_table <- renderTable({
 
-
-  output$mount_storage_test <- renderTable({
-
-    mount_storage_test <- mount_storage_data_cat() %>%
-      dplyr::slice(5)
+    mount_storage_test <- mount_storage_data_cat
 
     mount_storage_test
 
