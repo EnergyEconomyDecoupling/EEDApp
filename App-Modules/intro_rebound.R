@@ -17,9 +17,7 @@ intro_reboundUI <- function(id) {
                      R package 'ReboundTools' interactively, allowing analysis
                      of energy rebound by entering user-defined device, economic,
                      and elasticity parameters. Alternatively the user can select
-                     the two examples used in the paper (a Lamp and Car)."),
-              tags$p("Github --> Docker Hub --> Azure CD now working!"),
-              tags$p("Adding paragraph to trigger new build of app with updated EEDAppBaseImage")
+                     the two examples used in the paper (a Lamp and Car).")
               ),
 
           box(
@@ -32,12 +30,10 @@ intro_reboundUI <- function(id) {
             solidHeader = FALSE,
             collapsible = FALSE,
             enable_sidebar = FALSE,
-            tags$p("Now calling intro module"),
             tags$p("MOUNT PATH:/mnt/.drake"),
-            tags$p("Table"),
-            tableOutput(outputId = ns("mount_storage_test_table")),
             tags$p("Head Text"),
-            verbatimTextOutput(outputId = ns("mount_storage_test_head"))
+            verbatimTextOutput(outputId = ns("mount_storage_test_head")),
+            verbatimTextOutput(outputId = ns("PSUT_Agg_Re_all_St_pfu_head"))
           )
               )
 }
@@ -45,25 +41,15 @@ intro_reboundUI <- function(id) {
 intro_rebound <- function(input, output, session){
 
 
-  # mount_storage_data_cat <- reactive({
-  #
-  #   mount_storage_data_cat <- mount_storage_data_cat
-  #
-  # })
-
-
-  output$mount_storage_test_table <- renderTable({
-
-    mount_storage_test <- mount_storage_data_cat
-
-    mount_storage_test
-
-
-  })
-
   output$mount_storage_test_head <- renderPrint(
 
     head(mount_storage_data_cat)
+
+  )
+
+  output$PSUT_Agg_Re_all_St_pfu_head <- renderPrint(
+
+    head(PSUT_Agg_Re_all_St_pfu)
 
   )
 
