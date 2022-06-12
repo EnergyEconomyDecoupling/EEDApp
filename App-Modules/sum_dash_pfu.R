@@ -240,9 +240,9 @@ sumdashplots <- function(input, output, session,
 
     p <- ggplot2::ggplot(data = PSUT_Agg_Re_all_St_pfu_plotdata()) +
 
-      ggplot2::geom_line(mapping = aes(x = as.numeric(Year),
+      ggplot2::geom_line(mapping = aes(x = Year,
                                        y = E.dot,
-                                       group = Stage,
+                                       # group = Stage,
                                        color = Stage)) +
 
       ggplot2::scale_colour_manual(values = cols) +
@@ -254,8 +254,8 @@ sumdashplots <- function(input, output, session,
       MKHthemes::xy_theme()
 
     p_plotly <- plotly::ggplotly(p, height = 400, tooltip = c("Year",
-                                                              "Stage",
-                                                              "E.dot")) %>%
+                                                              "E.dot",
+                                                              "Stage")) %>%
 
       plotly::layout(showlegend = as.logical(input$legend),
                      legend = list(itemclick = TRUE,

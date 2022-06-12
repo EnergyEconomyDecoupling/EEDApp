@@ -16,6 +16,7 @@ PSUT_Agg_Re_all_St_pfu_prepped <- PSUT_Agg_Re_all_St_pfu %>%
   ) %>%
   tidyr::pivot_longer(cols = `1960`:`2019`,
                       values_to = "E.dot",
-                      names_to = "Year")
+                      names_to = "Year") %>%
+  dplyr::mutate(Year = as.numeric(Year))
 
 
