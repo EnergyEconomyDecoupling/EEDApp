@@ -22,7 +22,9 @@ intro_pfuUI <- function(id) {
               tags$hr(),
               tags$p("This database serves to extend the the International
                       Energy Agencies (IEA) World extended energy balance data
-                      from the Final energy stage, to the Useful energy stage")
+                      from the Final energy stage to the Useful energy stage,
+                      and quantity the Primary, Final, and Useful stages of the
+                      Energy Conversion Chain (ECC) in Exergy terms.")
               )
         )
         }

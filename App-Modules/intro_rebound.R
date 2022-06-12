@@ -20,28 +20,28 @@ intro_reboundUI <- function(id) {
                      the two examples used in the paper (a Lamp and Car).")
               ),
 
-          box(
-            width = 12,
-            height = 1200,
-            title = "Testing mounted storage",
-            id = "mount_storage_test_box",
-            closable = FALSE,
-            # status = "warning",
-            solidHeader = FALSE,
-            collapsible = FALSE,
-            enable_sidebar = FALSE,
-            verbatimTextOutput(outputId = ns("PSUT_Agg_Re_all_St_pfu_head"))
-          )
+          # box(
+          #   width = 12,
+          #   height = 1200,
+          #   title = "Testing mounted storage",
+          #   id = "mount_storage_test_box",
+          #   closable = FALSE,
+          #   # status = "warning",
+          #   solidHeader = FALSE,
+          #   collapsible = FALSE,
+          #   enable_sidebar = FALSE,
+          #   verbatimTextOutput(outputId = ns("PSUT_Agg_Re_all_St_pfu_head"))
+          # )
               )
 }
 
 intro_rebound <- function(input, output, session){
 
 
-  output$PSUT_Agg_Re_all_St_pfu_head <- renderPrint(
-
-    head(PSUT_Agg_Re_all_St_pfu)
-
-  )
+  # output$PSUT_Agg_Re_all_St_pfu_head <- renderPrint(
+  #
+  #   head(PSUT_Agg_Re_all_St_pfu)
+  #
+  # )
 
 }
