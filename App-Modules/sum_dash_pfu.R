@@ -255,7 +255,10 @@ sumdashplots <- function(input, output, session,
 
     p_plotly <- plotly::ggplotly(p, height = 400, tooltip = c("Year",
                                                               "E.dot",
-                                                              "Stage")) %>%
+                                                              "Stage"#,
+                                                              # "Energy.type",
+                                                              # "Gross.Net"
+                                                              )) %>%
 
       plotly::layout(showlegend = as.logical(input$legend),
                      legend = list(itemclick = TRUE,

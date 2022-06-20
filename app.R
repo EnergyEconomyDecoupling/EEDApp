@@ -17,7 +17,7 @@ library(fontawesome)
 library(rmarkdown)
 library(tidyverse)
 
-# Load specific visualisation packages
+# Load specific visualization packages
 library(plotly)
 library(scales)
 library(xtable)
@@ -39,7 +39,10 @@ source("App-Modules/relresources.R", local = TRUE)
 # Load PFU modules
 source("App-Modules/intro_pfu.R", local = TRUE)
 source("App-Modules/sum_dash_pfu.R", local = TRUE)
-
+source("App-Modules/allocations.R", local = TRUE)
+source("App-Modules/fu_efficiencies.R", local = TRUE)
+source("App-Modules/rebound_space.R", local = TRUE)
+source("App-Modules/ecc.R", local = TRUE)
 
 # Load Energy-Economy modules
 
@@ -59,9 +62,6 @@ source("App-Modules/customTheme.R", local = TRUE)
 # Loads cicerone guides
 source("App-Modules/guides_pfu.R", local = TRUE)
 
-# Load bespoke functions
-source("App-Modules/functions.R", local = TRUE)
-
 ################################################################################
 # UI
 ################################################################################
@@ -70,6 +70,11 @@ ui = dashboardPage(
 
   # useShinyjs(),
 
+################################################################################
+# Import font awesome icons
+################################################################################
+
+# tags$style("@import url(https://use.fontawesome.com/releases/v5.7.2/css/all.css);"),
 
 ################################################################################
 # Header UI
@@ -129,41 +134,69 @@ ui = dashboardPage(
 
     sidebarMenu(id = "sidebarmenu",
 
-                menuItem("Outline", tabName = "outline", icon = icon("chalkboard-teacher fa-fw")),
+                menuItem("Outline",
+                         tabName = "outline",
+                         icon = icon("pen", verify_fa = FALSE)),
 
-                menuItem("PFU Database", expandedName = "pfu_menu", icon = icon("battery-quarter"),
+                menuItem("PFU Database",
+                         expandedName = "pfu_menu",
+                         icon = icon("battery-quarter", verify_fa = FALSE),
+                         # badgeLabel = "New",
+                         # badgeColor = "green",
 
-                         menuItem("Introduction", tabName = "intro_pfu", icon = icon("book-reader")),
+                         menuItem("Introduction", tabName = "intro_pfu", icon = icon("book", verify_fa = FALSE)),
 
-                         menuItem("PFU Dashboard", tabName = "dashboard_pfu", icon = icon("dashboard"))#,
+                         menuItem("PFU Dashboard", tabName = "dashboard_pfu", icon = icon("chalkboard", verify_fa = FALSE)),
 
-                         # menuItem("Final-to-useful Allocations", tabName = "allocations", icon = icon("chart-pie")),
-                         #
-                         # menuItem("Final-to-useful Efficiencies", tabName = "eta", icon = icon("chart-line")),
-                         #
                          # menuItem("PFU Consumption", tabName = "consumption", icon = icon("lightbulb")),
-                         #
-                         # menuItem("Energy Conversion Chain", tabName = "sankey", icon = icon("project-diagram")),
+
+                         menuItem("Final-to-useful Allocations", tabName = "allocations", icon = icon("chart-pie", verify_fa = FALSE)),
+
+                         menuItem("Final-to-useful Efficiencies", tabName = "fu_efficiencies", icon = icon("line-chart", verify_fa = FALSE)),
+
+                         menuItem("Rebound Space", tabName = "rebound_space", icon = icon("compress", verify_fa = FALSE)),
+
+                         menuItem("Energy Conversion Chain", tabName = "ecc", icon = icon("link", verify_fa = FALSE))#,
                          #
                          # menuItem("Database documentation", tabName = "documentation", icon = icon("book")),
                          #
-                         # menuItem("Citation", tabName = "citation_pfu", icon = icon("user-graduate"))
+                         # menuItem("Citation", tabName = "citation_pfu", icon = icon("fa-user-graduate"))
 
                 ),
 
-                menuItem("Rebound", expandedName = "rebound", icon = icon("compress-alt fa-fw"),
+                menuItem("Rebound",
+                         expandedName = "rebound",
+                         icon = icon("compress", verify_fa = FALSE),
+                         # badgeLabel = "New",
+                         # badgeColor = "green",
 
-                         menuItem("Introduction", tabName = "intro_rebound", icon = icon("book-reader fa-fw")),
+                         menuItem("Introduction", tabName = "intro_rebound", icon = icon("book", verify_fa = FALSE)),
 
-                         menuItem("Rebound Dashboard", tabName = "dashboard_rebound", icon = icon("dashboard fa-fw")),
+                         menuItem("Rebound Dashboard", tabName = "dashboard_rebound", icon = icon("chalkboard", verify_fa = FALSE)),
 
-                         menuItem("ReboundTools", tabName = "rebound_tools", icon = icon("r-project")),
+                         menuItem("ReboundTools", tabName = "rebound_tools", icon = icon("r-project", verify_fa = FALSE)),
 
-                         menuItem("Citation", tabName = "citation_rebound", icon = icon("user-graduate fa-fw"))
+                         menuItem("Citation", tabName = "citation_rebound", icon = icon("user-graduate", verify_fa = FALSE))
 
                          ),
 
-                menuItem("Contact", tabName = "contact", icon = icon("phone-alt fa-fw"))
+                menuItem("Net Energy Analysis",
+                         tabName = "netenergy",
+                         icon = icon("balance-scale-left", verify_fa = FALSE),
+                         badgeLabel = "Coming Soon",
+                         badgeColor = "orange"
+                         ),
+
+                menuItem("Energy-Economy",
+                         tabName = "energyecon",
+                         icon = icon("money-bill-wave", verify_fa = FALSE),
+                         badgeLabel = "Coming Soon",
+                         badgeColor = "orange"
+                         ),
+
+                menuItem("Contact",
+                         tabName = "contact",
+                         icon = icon("phone", verify_fa = FALSE))
 
                 )
     ),
@@ -187,23 +220,30 @@ ui = dashboardPage(
 
       # General
       tabItem(tabName = "outline",
-              outlineUI(id = "outline1")),
+              outlineUI(id = "outline_id_1")),
 
       # PFU-Database items
       tabItem(tabName = "intro_pfu",
-              intro_pfuUI(id = "intro2")),
+              intro_pfuUI(id = "intropfu_id_1")),
 
       tabItem(tabName = "dashboard_pfu",
-              sumdashplotsUI(id = "dash1")),
+              sumdashplotsUI(id = "dashpfu_id_1")),
 
       # tabItem(tabName = "sankey",
       #         eccUI(id = "ecc1")),
       #
-      # tabItem(tabName = "allocations",
-      #         allocplotsUI(id = "allocations1")),
-      #
-      # tabItem(tabName = "eta",
-      #         etaplotsUI(id = "eta1")),
+      tabItem(tabName = "allocations",
+              allocplotsUI(id = "alloc_id_1")),
+
+      tabItem(tabName = "fu_efficiencies",
+              etaplotsUI(id = "fu_id_1")),
+
+      tabItem(tabName = "rebound_space",
+              rebound_spaceUI(id = "rebound_id_1")),
+
+      tabItem(tabName = "ecc",
+              eccUI(id = "ecc_id_1")),
+
       #
       # tabItem(tabName = "consumption",
       #         consumptionUI(id = "consumption1")),
@@ -214,22 +254,22 @@ ui = dashboardPage(
 
       ## Rebound modules - UI
       tabItem(tabName = "intro_rebound",
-              intro_reboundUI(id = "intro3")),
+              intro_reboundUI(id = "introreb_id_1")),
 
       tabItem(tabName = "dashboard_rebound",
-              rebound_dashUI(id = "dash3")),
+              rebound_dashUI(id = "dashreb_id_1")),
 
       tabItem(tabName = "rebound_tools",
-              rebound_docUI(id = "doc2")),
+              rebound_docUI(id = "docreb_id_1")),
 
       tabItem(tabName = "citation_rebound",
-              citation_reboundUI(id = "cit2")),
+              citation_reboundUI(id = "citreb_id_1")),
 
       ## Other modules - UI
 
       # Related resources UI
       tabItem(tabName = "relatedresources",
-              relresourcesUI(id = "rr1"))
+              relresourcesUI(id = "rr_id_1"))
 
       # Contact UI
 
@@ -275,10 +315,23 @@ server <- function(input, output, session) {
 
   # Calls sum_dash_pfu.R module
   callModule(module = sumdashplots,
-             id = "dash1",
-             PSUT_etas,
-             PSUT_metrics_total,
-             GDP_metrics)
+             id = "dashpfu_id_1")
+
+  callModule(module = allocplots,
+             id = "alloc_id_1",
+             comp_alloc_tables_prepped)
+
+  callModule(module = etaplots,
+             id = "fu_id_1",
+             comp_effic_tables_prepped)
+
+  callModule(module = rebound_space,
+             id = "rebound_id_1",
+             rebound_space_data_prepped)
+
+  callModule(module = ecc,
+             id = "ecc_id_1",
+             psut_useful)
 
 
   ## Rebound modules
@@ -286,12 +339,12 @@ server <- function(input, output, session) {
   # Calls rebound introduction module
 
   callModule(module = intro_rebound,
-             id = "intro3")
+             id = "introreb_id_1")
 
   # Calls rebound dashboard module
 
   callModule(module = rebound_dash,
-             id = "dash3")
+             id = "dashreb_id_1")
 
   # Calls rebound citation module
 
