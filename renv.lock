@@ -17,6 +17,22 @@
       "Hash": "dcd1743af4336156873e3ce3c950b8b9",
       "Requirements": []
     },
+    "DT": {
+      "Package": "DT",
+      "Version": "0.23",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "d8f1498dc47763ce4647c8d03214d30b",
+      "Requirements": [
+        "crosstalk",
+        "htmltools",
+        "htmlwidgets",
+        "jquerylib",
+        "jsonlite",
+        "magrittr",
+        "promises"
+      ]
+    },
     "Formula": {
       "Package": "Formula",
       "Version": "1.2-4",
@@ -620,23 +636,6 @@
         "rlang",
         "tibble",
         "tidyselect",
-        "vctrs"
-      ]
-    },
-    "drake": {
-      "Package": "drake",
-      "Version": "7.13.3",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "0c7f735ec457ec8d499be5c1ea5a647d",
-      "Requirements": [
-        "base64url",
-        "digest",
-        "igraph",
-        "rlang",
-        "storr",
-        "tidyselect",
-        "txtq",
         "vctrs"
       ]
     },
@@ -1767,17 +1766,6 @@
         "lattice"
       ]
     },
-    "storr": {
-      "Package": "storr",
-      "Version": "1.2.5",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "96034207276a46a44dc81b8d43397602",
-      "Requirements": [
-        "R6",
-        "digest"
-      ]
-    },
     "stringdist": {
       "Package": "stringdist",
       "Version": "0.9.8",
@@ -1945,18 +1933,6 @@
       "Hash": "29f67ab15405b390b90e56ff22198ead",
       "Requirements": [
         "xfun"
-      ]
-    },
-    "txtq": {
-      "Package": "txtq",
-      "Version": "0.2.4",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "47bc241ac3efaa6b75109c00ad708448",
-      "Requirements": [
-        "R6",
-        "base64url",
-        "filelock"
       ]
     },
     "tzdb": {
