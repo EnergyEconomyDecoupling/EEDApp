@@ -229,9 +229,6 @@ ui = dashboardPage(
       tabItem(tabName = "dashboard_pfu",
               sumdashplotsUI(id = "dashpfu_id_1")),
 
-      # tabItem(tabName = "sankey",
-      #         eccUI(id = "ecc1")),
-      #
       tabItem(tabName = "allocations",
               allocplotsUI(id = "alloc_id_1")),
 
