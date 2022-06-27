@@ -190,6 +190,35 @@
         "tidyr"
       ]
     },
+    "R.methodsS3": {
+      "Package": "R.methodsS3",
+      "Version": "1.8.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "278c286fd6e9e75d0c2e8f731ea445c8",
+      "Requirements": []
+    },
+    "R.oo": {
+      "Package": "R.oo",
+      "Version": "1.25.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "a0900a114f4f0194cf4aa8cd4a700681",
+      "Requirements": [
+        "R.methodsS3"
+      ]
+    },
+    "R.utils": {
+      "Package": "R.utils",
+      "Version": "2.11.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "a7ecb8e60815c7a18648e84cd121b23a",
+      "Requirements": [
+        "R.methodsS3",
+        "R.oo"
+      ]
+    },
     "R6": {
       "Package": "R6",
       "Version": "2.5.1",
@@ -223,6 +252,22 @@
       "Repository": "CRAN",
       "Hash": "45f0398006e83a5b10b72a90663d8d8c",
       "Requirements": []
+    },
+    "RSQLite": {
+      "Package": "RSQLite",
+      "Version": "2.2.14",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "086113da6af75461b8dc8d916dcf9620",
+      "Requirements": [
+        "DBI",
+        "Rcpp",
+        "bit64",
+        "blob",
+        "memoise",
+        "pkgconfig",
+        "plogr"
+      ]
     },
     "Rcpp": {
       "Package": "Rcpp",
@@ -354,6 +399,23 @@
       "Hash": "0c54cf3a08cc0e550fbd64ad33166143",
       "Requirements": [
         "backports"
+      ]
+    },
+    "billboarder": {
+      "Package": "billboarder",
+      "Version": "0.3.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "0177b70810cfa18bbc4b619dd576b7b0",
+      "Requirements": [
+        "ggplot2",
+        "htmltools",
+        "htmlwidgets",
+        "jsonlite",
+        "magrittr",
+        "rlang",
+        "scales",
+        "shiny"
       ]
     },
     "bit": {
@@ -1072,6 +1134,23 @@
       "Hash": "d07e729b27b372429d42d24d503613a0",
       "Requirements": []
     },
+    "keyring": {
+      "Package": "keyring",
+      "Version": "1.3.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f97832aee679462739f7146fead53b11",
+      "Requirements": [
+        "R6",
+        "askpass",
+        "assertthat",
+        "filelock",
+        "openssl",
+        "rappdirs",
+        "sodium",
+        "yaml"
+      ]
+    },
     "knitr": {
       "Package": "knitr",
       "Version": "1.39",
@@ -1211,6 +1290,17 @@
         "rlang",
         "tibble",
         "tidyr"
+      ]
+    },
+    "memoise": {
+      "Package": "memoise",
+      "Version": "2.0.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "e2817ccf4a065c5d9d7f2cfbe7c1d78c",
+      "Requirements": [
+        "cachem",
+        "rlang"
       ]
     },
     "mgcv": {
@@ -1364,6 +1454,14 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "01f28d4278f15c76cddbea05899c5d6f",
+      "Requirements": []
+    },
+    "plogr": {
+      "Package": "plogr",
+      "Version": "0.2.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "09eb987710984fc2905c7129c7d85e65",
       "Requirements": []
     },
     "plotly": {
@@ -1666,6 +1764,16 @@
         "viridisLite"
       ]
     },
+    "scrypt": {
+      "Package": "scrypt",
+      "Version": "0.1.4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "a1d1dfd8769a6cda6087b55430b1a901",
+      "Requirements": [
+        "Rcpp"
+      ]
+    },
     "selectr": {
       "Package": "selectr",
       "Version": "0.4-2",
@@ -1747,6 +1855,33 @@
         "shinydashboard",
         "waiter"
       ]
+    },
+    "shinymanager": {
+      "Package": "shinymanager",
+      "Version": "1.0.400",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "9fd419993e75cf7e12a985e786b02f51",
+      "Requirements": [
+        "DBI",
+        "DT",
+        "R.utils",
+        "R6",
+        "RSQLite",
+        "billboarder",
+        "htmltools",
+        "openssl",
+        "scrypt",
+        "shiny"
+      ]
+    },
+    "sodium": {
+      "Package": "sodium",
+      "Version": "1.2.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "3606bb09e0914edd4fc8313b500dcd5e",
+      "Requirements": []
     },
     "sourcetools": {
       "Package": "sourcetools",
