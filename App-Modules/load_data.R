@@ -1,13 +1,19 @@
+# Set filepath to credentials sql database
+credentials_path <- file.path("Z:\\",
+                              #"/pfu-output-data",
+                              "EEDAppCredentials",
+                              "credentials_database.sqlite")
+
 # Establish filepaths
-pfu_path <- file.path(#"Z:\\",
-                      "/pfu-output-data",
+pfu_path <- file.path("Z:\\",
+                      #"/pfu-output-data",
                       "PipelineCaches",
                       "PFUDatabase_targets_2022-06-11",
                       "_targets")
 
 
-pfuagg_path <- file.path(#"Z:\\",
-                         "/pfu-output-data",
+pfuagg_path <- file.path("Z:\\",
+                         #"/pfu-output-data",
                          "PipelineCaches",
                          "PFUAggDatabase_targets_2022-06-11",
                          "_targets")

@@ -13,6 +13,10 @@ library(htmlwidgets)
 library(cicerone)
 library(fontawesome)
 
+# Load credential management packages
+library(shinymanager)
+library(keyring)
+
 # Load general R packages
 library(rmarkdown)
 library(tidyverse)
@@ -32,7 +36,6 @@ source("App-Modules/load_data.R", local = TRUE)
 source("App-Modules/prepare_data.R", local = TRUE)
 
 # Load main shiny modules
-
 source("App-Modules/outline.R", local = TRUE)
 source("App-Modules/relresources.R", local = TRUE)
 
@@ -229,9 +232,6 @@ ui = dashboardPage(
       tabItem(tabName = "dashboard_pfu",
               sumdashplotsUI(id = "dashpfu_id_1")),
 
-      # tabItem(tabName = "sankey",
-      #         eccUI(id = "ecc1")),
-      #
       tabItem(tabName = "allocations",
               allocplotsUI(id = "alloc_id_1")),
 
@@ -280,6 +280,8 @@ ui = dashboardPage(
 
 ) # Close UI
 
+# Secure app
+ui <- shinymanager::secure_app(ui, enable_admin = TRUE)
 
 ################################################################################
 # Server
@@ -287,7 +289,21 @@ ui = dashboardPage(
 
 server <- function(input, output, session) {
 
+################################################################################
+# Authenticate user
+################################################################################
 
+  # call the server part
+  # check_credentials returns a function to authenticate users
+  res_auth <- shinymanager::secure_server(
+    # check_credentials = shinymanager::check_credentials(credentials)
+    check_credentials = shinymanager::check_credentials(credentials_path,
+                                                        passphrase = "passphrase_wihtout_keyring")
+  )
+
+  output$auth_output <- renderPrint({
+    reactiveValuesToList(res_auth)
+  })
 
 
 ################################################################################
