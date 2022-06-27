@@ -26,3 +26,6 @@ COPY init_container.sh /etc/services.d/sshd/run
 
 # Expose SSH and Shiny ports
 EXPOSE 2222 3838
+
+# Run app
+CMD ["R", "-e", "shiny::runApp('app.R', host = '0.0.0.0', port = 3838)"]
