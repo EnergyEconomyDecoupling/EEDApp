@@ -205,7 +205,7 @@ sumdashplots <- function(input, output, session,
 # Select Data #
 ################################################################################
 
-# Creates reactive data frame for indexed EX
+# Creates reactive data frame for total aggregate PFU EX
   PSUT_Agg_Re_all_St_pfu_plotdata <- reactive({
 
     validate(

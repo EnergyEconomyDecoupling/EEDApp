@@ -42,6 +42,7 @@ source("App-Modules/relresources.R", local = TRUE)
 # Load PFU modules
 source("App-Modules/intro_pfu.R", local = TRUE)
 source("App-Modules/sum_dash_pfu.R", local = TRUE)
+source("App-Modules/pfuex.R", local = TRUE)
 source("App-Modules/allocations.R", local = TRUE)
 source("App-Modules/fu_efficiencies.R", local = TRUE)
 source("App-Modules/rebound_space.R", local = TRUE)
@@ -144,14 +145,12 @@ ui = dashboardPage(
                 menuItem("PFU Database",
                          expandedName = "pfu_menu",
                          icon = icon("battery-quarter", verify_fa = FALSE),
-                         # badgeLabel = "New",
-                         # badgeColor = "green",
 
                          menuItem("Introduction", tabName = "intro_pfu", icon = icon("book", verify_fa = FALSE)),
 
                          menuItem("PFU Dashboard", tabName = "dashboard_pfu", icon = icon("chalkboard", verify_fa = FALSE)),
 
-                         # menuItem("PFU Consumption", tabName = "consumption", icon = icon("lightbulb")),
+                         menuItem("PFU EX Consumption", tabName = "pfuex", icon = icon("lightbulb")),
 
                          menuItem("Final-to-useful Allocations", tabName = "allocations", icon = icon("chart-pie", verify_fa = FALSE)),
 
@@ -170,8 +169,6 @@ ui = dashboardPage(
                 menuItem("Rebound",
                          expandedName = "rebound",
                          icon = icon("compress", verify_fa = FALSE),
-                         # badgeLabel = "New",
-                         # badgeColor = "green",
 
                          menuItem("Introduction", tabName = "intro_rebound", icon = icon("book", verify_fa = FALSE)),
 
@@ -232,6 +229,9 @@ ui = dashboardPage(
       tabItem(tabName = "dashboard_pfu",
               sumdashplotsUI(id = "dashpfu_id_1")),
 
+      tabItem(tabName = "pfuex",
+              pfuexUI(id = "pfuex_id_1")),
+
       tabItem(tabName = "allocations",
               allocplotsUI(id = "alloc_id_1")),
 
@@ -244,10 +244,6 @@ ui = dashboardPage(
       tabItem(tabName = "ecc",
               eccUI(id = "ecc_id_1")),
 
-      #
-      # tabItem(tabName = "consumption",
-      #         consumptionUI(id = "consumption1")),
-      #
       # tabItem(tabName = "documentation",
       #         documentationUI(id = "doc1")),
 
@@ -275,13 +271,12 @@ ui = dashboardPage(
 
       ) # Close tabitems
 
-
   ) # Close dashboard body
 
 ) # Close UI
 
 # Secure app
-ui <- shinymanager::secure_app(ui, enable_admin = TRUE)
+# ui <- shinymanager::secure_app(ui, enable_admin = TRUE)
 
 ################################################################################
 # Server
@@ -333,6 +328,10 @@ server <- function(input, output, session) {
   callModule(module = sumdashplots,
              id = "dashpfu_id_1")
 
+  # Calls the pfuex.R module
+  callModule(module = pfuex,
+             id = "pfuex_id_1")
+
   callModule(module = allocplots,
              id = "alloc_id_1",
              comp_alloc_tables_prepped)
@@ -353,12 +352,10 @@ server <- function(input, output, session) {
   ## Rebound modules
 
   # Calls rebound introduction module
-
   callModule(module = intro_rebound,
              id = "introreb_id_1")
 
   # Calls rebound dashboard module
-
   callModule(module = rebound_dash,
              id = "dashreb_id_1")
 

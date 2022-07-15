@@ -1,5 +1,22 @@
 # Prepare data for app
 
+# Create two column data frame for matching codes to names
+
+agg_regions  <- data.frame(PFU.code = c("Africa", "Asia_", "Europe", "MidEast",
+                                        "NoAmr", "Oceania", "SoCeAmr", "Bunkers", "World"),
+                           Country.wname = c("Africa", "Asia", "Europe", "Middle East",
+                                             "North America", "Oceania", "South and Central America",
+                                             "World Bunkers", "World"))
+names_codes <- country_conc %>%
+  dplyr::select(IEA.name, PFU.code) %>%
+  dplyr::filter(PFU.code %in% countries) %>%
+  dplyr::mutate(Country.wname = paste0(PFU.code, " - ", IEA.name), .before = 1) %>%
+  dplyr::add_row(agg_regions) %>%
+  dplyr::arrange(PFU.code)
+
+country_options <- names_codes$PFU.code
+names(country_options) <- names_codes$Country.wname
+
 #
 #
 #
