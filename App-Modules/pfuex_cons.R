@@ -1,5 +1,5 @@
 # Establishes UI module function
-pfuexUI <- function(id) {
+pfuex_consUI <- function(id) {
   ns <- NS(id)
 
   fluidRow(
@@ -17,103 +17,106 @@ pfuexUI <- function(id) {
                     style = "font-size:78%")
            ),
 
-    box(title = "Variables",
-        solidHeader = TRUE,
-        width = 2,
+    tabBox(#title = "Variables",
+           width = 2,
+           tabPanel(title = "Options",
+                    selectizeInput(inputId = ns("iea_andor_mw"),
+                                   label = "IEA and/or MW:",
+                                   choices = c(IEA = "IEA",
+                                               MW = "MW",
+                                               Both = "both"),
+                                   width = "100%",
+                                   options = list(dropdownParent = 'body')),
 
-        selectizeInput(inputId = ns("iea_andor_mw"),
-                       label = "IEA and/or MW:",
-                       choices = c(IEA = "IEA",
-                                   MW = "MW",
-                                   Both = "both"),
-                       width = "100%",
-                       options = list(dropdownParent = 'body')),
+                    selectizeInput(inputId = ns("indexed"),
+                                   label = "Index Data:",
+                                   choices = c(Yes = "Yes",
+                                               No = "No"),
+                                   width = "100%",
+                                   options = list(dropdownParent = 'body')),
 
-        selectizeInput(inputId = ns("indexed"),
-                       label = "Index Data:",
-                       choices = c(Yes = "Yes",
-                                   No = "No"),
-                       width = "100%",
-                       options = list(dropdownParent = 'body')),
+                    selectizeInput(inputId = ns("country"),
+                                   label = "Country:",
+                                   choices = country_options,
+                                   multiple = TRUE,
+                                   width = "100%",
+                                   options = list(dropdownParent = 'body')),
 
-        selectizeInput(inputId = ns("country"),
-                       label = "Country:",
-                       choices = country_options,
-                       multiple = TRUE,
-                       width = "100%",
-                       options = list(dropdownParent = 'body')),
+                    selectizeInput(inputId = ns("EorX"),
+                                   label = "Energy Type:",
+                                   choices = c(Energy = "E", `Exergy` = "X"),
+                                   width = "100%",
+                                   options = list(dropdownParent = 'body')),
 
-        selectizeInput(inputId = ns("EorX"),
-                       label = "Energy Type:",
-                       choices = c(Energy = "E", `Exergy` = "X"),
-                       width = "100%",
-                       options = list(dropdownParent = 'body')),
+                    selectizeInput(inputId = ns("stage"),
+                                   label = "ECC Stage:",
+                                   choices = c(Primary = "Primary",
+                                               Final = "Final",
+                                               Useful = "Useful"),
+                                   multiple = TRUE %>%
+                                     sort(),
+                                   selected = c("Primary", "Final", "Useful"),
+                                   width = "100%",
+                                   options = list(dropdownParent = 'body')),
 
-        selectizeInput(inputId = ns("stage"),
-                       label = "ECC Stage:",
-                       choices = c(Primary = "Primary",
-                                   Final = "Final",
-                                   Useful = "Useful"),
-                       multiple = TRUE %>%
-                         sort(),
-                       selected = c("Primary", "Final", "Useful"),
-                       width = "100%",
-                       options = list(dropdownParent = 'body')),
+                    selectizeInput(inputId = ns("gross_net"),
+                                   label = "Gross or Net:",
+                                   choices = c(Gross = "Gross",
+                                               Net = "Net") %>%
+                                     sort(),
+                                   width = "100%",
+                                   options = list(dropdownParent = 'body')),
 
-        selectizeInput(inputId = ns("gross_net"),
-                       label = "Gross or Net:",
-                       choices = c(Gross = "Gross",
-                                   Net = "Net") %>%
-                         sort(),
-                       width = "100%",
-                       options = list(dropdownParent = 'body')),
+                    selectizeInput(inputId = ns("aggby"),
+                                   label = "Aggregation:",
+                                   choices = c(Total = "Total",
+                                               Product = "Product",
+                                               Sector = "Sector"),
+                                   width = "100%",
+                                   options = list(dropdownParent = 'body')),
 
-        selectizeInput(inputId = ns("aggby"),
-                       label = "Aggregation:",
-                       choices = c(Total = "Total",
-                                   Product = "Product",
-                                   Sector = "Sector"),
-                       width = "100%",
-                       options = list(dropdownParent = 'body')),
+                    selectizeInput(inputId = ns("dataformat"),
+                                   label = "Data Format:",
+                                   choices = c("Long", "Wide"),
+                                   width = "100%",
+                                   options = list(dropdownParent = 'body')),
 
-        selectizeInput(inputId = ns("dataformat"),
-                       label = "Data Format:",
-                       choices = c("Long", "Wide"),
-                       width = "100%",
-                       options = list(dropdownParent = 'body')),
+                    selectizeInput(inputId = ns("facet_variable"),
+                                   label = "Facet Variable:",
+                                   choices = c(Country = "Country",
+                                               Stage = "Stage"),
+                                   selected = "Country",
+                                   multiple = TRUE,
+                                   width = "100%",
+                                   options = list(dropdownParent = 'body')),
 
-        selectizeInput(inputId = ns("facet_variable"),
-                       label = "Facet Variable:",
-                       choices = c(Country = "Country",
-                                   Stage = "Stage"),
-                       selected = "Country",
-                       multiple = TRUE,
-                       width = "100%",
-                       options = list(dropdownParent = 'body')),
-
-        selectizeInput(inputId = ns("facet_scales"),
-                       label = "Facet Scales:",
-                       choices = c(Fixed = "fixed",
-                                   `Variable Y Axis` = "free_y"),
-                       width = "100%",
-                       options = list(dropdownParent = 'body')),
+                    selectizeInput(inputId = ns("facet_scales"),
+                                   label = "Facet Scales:",
+                                   choices = c(Fixed = "fixed",
+                                               `Variable Y Axis` = "free_y"),
+                                   width = "100%",
+                                   options = list(dropdownParent = 'body')),
 
 
-        tags$h5(tags$b("Download Selected Data")),
+           ),
 
-        downloadButton(outputId = ns("download_data"),
-                       label = "Download",
-                       class = NULL,
-                       icon = shiny::icon("download")),
+           tabPanel(title = "Download",
+                    tags$h5(tags$b("Download Selected Data")),
 
-        tags$h5(tags$b("Download All Data")),
+                    downloadButton(outputId = ns("download_data"),
+                                   label = "Download",
+                                   class = NULL,
+                                   icon = shiny::icon("download")),
 
-        downloadButton(outputId = ns("download_alldata"),
-                       label = "Download",
-                       class = NULL,
-                       icon = shiny::icon("download"))
+                    tags$h5(tags$b("Download All Data")),
+
+                    downloadButton(outputId = ns("download_alldata"),
+                                   label = "Download",
+                                   class = NULL,
+                                   icon = shiny::icon("download"))
+                )
+           )
     )
-  )
 }
 
 ################################################################################
@@ -121,16 +124,16 @@ pfuexUI <- function(id) {
 ################################################################################
 
 # Establishes the server module function
-pfuex <- function(input, output, session,
-                  country,
-                  EorX,
-                  stage,
-                  gross_net,
-                  aggby,
-                  stackfill,
-                  facet_scales,
-                  facet_variable,
-                  dataformat) {
+pfuex_cons <- function(input, output, session,
+                       country,
+                       EorX,
+                       stage,
+                       gross_net,
+                       aggby,
+                       stackfill,
+                       facet_scales,
+                       facet_variable,
+                       dataformat) {
 
 ################################################################################
 # Update events
@@ -391,7 +394,7 @@ pfuex <- function(input, output, session,
         data <- selected_data_consumption() %>%
           as.data.frame() %>%
           tidyr::pivot_wider(names_from = "Year",
-                             values_from = "EX")
+                             values_from = "E.dot")
 
       } else {
 
@@ -430,7 +433,7 @@ pfuex <- function(input, output, session,
         data <- Agg_all_data %>%
           as.data.frame() %>%
           tidyr::pivot_wider(names_from = "Year",
-                             values_from = "EX")
+                             values_from = "E.dot")
 
       } else {
 

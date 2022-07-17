@@ -15,7 +15,6 @@ library(fontawesome)
 
 # Load credential management packages
 library(shinymanager)
-library(keyring)
 
 # Load general R packages
 library(rmarkdown)
@@ -24,8 +23,8 @@ library(tidyverse)
 # Load specific visualization packages
 library(plotly)
 library(scales)
-library(xtable)
-library(colorspace)
+library(xtable) #
+library(colorspace) #
 
 # Load Energy-Economy Decoupling organisation related packages
 library(ReboundTools)
@@ -42,7 +41,8 @@ source("App-Modules/relresources.R", local = TRUE)
 # Load PFU modules
 source("App-Modules/intro_pfu.R", local = TRUE)
 source("App-Modules/sum_dash_pfu.R", local = TRUE)
-source("App-Modules/pfuex.R", local = TRUE)
+source("App-Modules/pfuex_cons.R", local = TRUE)
+source("App-Modules/pfuex_eta.R", local = TRUE)
 source("App-Modules/allocations.R", local = TRUE)
 source("App-Modules/fu_efficiencies.R", local = TRUE)
 source("App-Modules/rebound_space.R", local = TRUE)
@@ -102,10 +102,6 @@ ui = dashboardPage(
                     "
                     ),
 
-                  # title = span("Energy-Economy Decoupling",
-                  #              style = "color: white; font-size: 18px"),
-                  # titleWidth = 300,
-
                   tags$li(a(href = 'http://www.leeds.ac.uk',
                             img(src = 'Leeds Logo White Text 1.png',
                                 title = "Leeds", height = "40px"),
@@ -150,7 +146,9 @@ ui = dashboardPage(
 
                          menuItem("PFU Dashboard", tabName = "dashboard_pfu", icon = icon("chalkboard", verify_fa = FALSE)),
 
-                         menuItem("PFU EX Consumption", tabName = "pfuex", icon = icon("lightbulb")),
+                         menuItem("PFU Consumption", tabName = "pfuex_cons", icon = icon("lightbulb")),
+
+                         menuItem("PFU Efficiency", tabName = "pfuex_eta", icon = icon("lightbulb")),
 
                          menuItem("Final-to-useful Allocations", tabName = "allocations", icon = icon("chart-pie", verify_fa = FALSE)),
 
@@ -207,6 +205,7 @@ ui = dashboardPage(
 
   body = dashboardBody(
 
+    # Load katex to allow the rendering mathematical symbols
     tags$head(
       tags$link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.css", integrity="sha384-9tPv11A+glH/on/wEu99NVwDPwkMQESOocs/ZGXPoIiLE8MU/qkqUcZ3zzL+6DuH", crossorigin="anonymous"),
       tags$script(src="https://cdn.jsdelivr.net/npm/katex@0.10.0-beta/dist/katex.min.js", integrity="sha384-U8Vrjwb8fuHMt6ewaCy8uqeUXv4oitYACKdB0VziCerzt011iQ/0TqlSlv8MReCm", crossorigin="anonymous"),
@@ -229,8 +228,11 @@ ui = dashboardPage(
       tabItem(tabName = "dashboard_pfu",
               sumdashplotsUI(id = "dashpfu_id_1")),
 
-      tabItem(tabName = "pfuex",
-              pfuexUI(id = "pfuex_id_1")),
+      tabItem(tabName = "pfuex_cons",
+              pfuex_consUI(id = "pfuex_cons_id_1")),
+
+      tabItem(tabName = "pfuex_eta",
+              pfuex_etaUI(id = "pfuex_eta_id_1")),
 
       tabItem(tabName = "allocations",
               allocplotsUI(id = "alloc_id_1")),
@@ -328,9 +330,13 @@ server <- function(input, output, session) {
   callModule(module = sumdashplots,
              id = "dashpfu_id_1")
 
-  # Calls the pfuex.R module
-  callModule(module = pfuex,
-             id = "pfuex_id_1")
+  # Calls the pfuex_cons.R module
+  callModule(module = pfuex_cons,
+             id = "pfuex_cons_id_1")
+
+  # Calls the pfuex_eta.R module
+  callModule(module = pfuex_eta,
+             id = "pfuex_eta_id_1")
 
   callModule(module = allocplots,
              id = "alloc_id_1",

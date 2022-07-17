@@ -4,7 +4,7 @@ credentials_path <- file.path("Z:\\",
                               "EEDAppCredentials",
                               "credentials_database.sqlite")
 
-# Establish filepaths
+# Establish filepaths to targets caches
 pfu_path <- file.path("Z:\\",
                       #"/pfu-output-data",
                       "PipelineCaches",
@@ -17,6 +17,12 @@ pfuagg_path <- file.path("Z:\\",
                          "PipelineCaches",
                          "PFUAggDatabase_targets_2022-06-11",
                          "_targets")
+
+# Establish filepath to PWT 10.0 data.
+pwt_path <- file.path("Z:\\",
+                      #"/pfu-output-data",
+                      "PWT10.0",
+                      "pwt100.xlsx")
 
 # PFUDatabase targets
 
