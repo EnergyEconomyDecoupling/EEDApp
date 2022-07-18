@@ -33,7 +33,7 @@ eccUI <- function(id) {
         selectizeInput(
           inputId = ns("country"),
           label = "Country:",
-          choices = countries,
+          choices = country_options,
           width = "100%",
           options = list(dropdownParent = 'body')),
 

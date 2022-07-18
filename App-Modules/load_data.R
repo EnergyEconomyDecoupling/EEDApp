@@ -18,11 +18,11 @@ pfuagg_path <- file.path("Z:\\",
                          "PFUAggDatabase_targets_2022-06-11",
                          "_targets")
 
-# Establish filepath to PWT 10.0 data.
-pwt_path <- file.path("Z:\\",
-                      #"/pfu-output-data",
-                      "PWT10.0",
-                      "pwt100.xlsx")
+# # Establish filepath to PWT 10.0 data.
+# pwt_path <- file.path("Z:\\",
+#                       #"/pfu-output-data",
+#                       "PWT10.0",
+#                       "pwt100.xlsx")
 
 # PFUDatabase targets
 
@@ -74,11 +74,7 @@ PSUT_MW_Eta_Re_all_St_pfu <- targets::tar_read_raw(name = "PSUT_MW_Eta_Re_all_St
                                                    store = pfuagg_path)
 
 
-
-
-
-
-
-
-
+# Load pwt10.0 data
+pwt10_data <- pwt10::pwt10.0 %>%
+  dplyr::filter(isocode %in% countries)
 

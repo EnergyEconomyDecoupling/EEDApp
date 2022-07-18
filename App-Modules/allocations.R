@@ -20,45 +20,49 @@ allocplotsUI <- function(id) {
                     style = "font-size:78%")
            ),
 
-    box(title = "Variables",
-        solidHeader = TRUE,
-        width = 2,
+    tabBox(width = 2,
+           tabPanel(title = "Options",
 
-        selectizeInput(inputId = ns("country"),
-                       label = "Country:",
-                       choices = countries,
-                       multiple = TRUE %>%
+           selectizeInput(inputId = ns("country"),
+                          label = "Country:",
+                          choices = country_options,
+                          multiple = TRUE %>%
+                            sort()),
+
+           selectInput(inputId = ns("efproduct"),
+                       label = "Final energy carrier:",
+                       choices = unique(comp_alloc_tables_prepped$Ef.product) %>%
                          sort()),
 
-        selectInput(inputId = ns("efproduct"),
-                    label = "Final energy carrier:",
-                    choices = unique(comp_alloc_tables_prepped$Ef.product) %>%
-                      sort()),
+           selectInput(inputId = ns("destination"),
+                       label = "Destination:",
+                       choices = unique(comp_alloc_tables_prepped$Destination) %>%
+                         sort()),
 
-        selectInput(inputId = ns("destination"),
-                    label = "Destination:",
-                    choices = unique(comp_alloc_tables_prepped$Destination) %>%
-                      sort()),
+           selectInput(inputId = ns("dataformat"),
+                       label = "Data Format:",
+                       choices = c("Wide", "Long"))
 
-        selectInput(inputId = ns("dataformat"),
-                    label = "Data Format:",
-                    choices = c("Wide", "Long")),
+          ),
 
-        tags$h5(tags$b("Selected Allocation Data")),
+          tabPanel(title = "Download",
 
-        downloadButton(outputId = ns("download_data"),
-                       label = "Download",
-                       class = NULL,
-                       icon = shiny::icon("download")),
+                   tags$h5(tags$b("Selected Allocation Data")),
 
-        tags$h5(tags$b("All Allocation Data")),
+                   downloadButton(outputId = ns("download_data"),
+                                  label = "Download",
+                                  class = NULL,
+                                  icon = shiny::icon("download")),
 
-        downloadButton(outputId = ns("download_alldata"),
-                       label = "Download",
-                       class = NULL,
-                       icon = shiny::icon("download"))
+                   tags$h5(tags$b("All Allocation Data")),
+
+                   downloadButton(outputId = ns("download_alldata"),
+                                  label = "Download",
+                                  class = NULL,
+                                  icon = shiny::icon("download"))
+        )
+        )
     )
-  )
 }
 
 # Establishes the server module function

@@ -38,18 +38,18 @@ source("App-Modules/prepare_data.R", local = TRUE)
 source("App-Modules/outline.R", local = TRUE)
 source("App-Modules/relresources.R", local = TRUE)
 
-# Load PFU modules
+# Load PFU Database modules
 source("App-Modules/intro_pfu.R", local = TRUE)
 source("App-Modules/sum_dash_pfu.R", local = TRUE)
 source("App-Modules/pfuex_cons.R", local = TRUE)
 source("App-Modules/pfuex_eta.R", local = TRUE)
 source("App-Modules/allocations.R", local = TRUE)
 source("App-Modules/fu_efficiencies.R", local = TRUE)
-source("App-Modules/rebound_space.R", local = TRUE)
 source("App-Modules/ecc.R", local = TRUE)
 
-# Load Energy-Economy modules
-
+# Load PFU Analysis modules
+source("App-Modules/rebound_space.R", local = TRUE)
+source("App-Modules/decoupling_space.R", local = TRUE)
 
 # Load Rebound modules
 source("App-Modules/intro_rebound.R", local = TRUE)
@@ -154,14 +154,21 @@ ui = dashboardPage(
 
                          menuItem("Final-to-useful Efficiencies", tabName = "fu_efficiencies", icon = icon("line-chart", verify_fa = FALSE)),
 
-                         menuItem("Rebound Space", tabName = "rebound_space", icon = icon("compress", verify_fa = FALSE)),
-
                          menuItem("Energy Conversion Chain", tabName = "ecc", icon = icon("link", verify_fa = FALSE))#,
                          #
                          # menuItem("Database documentation", tabName = "documentation", icon = icon("book")),
                          #
                          # menuItem("Citation", tabName = "citation_pfu", icon = icon("fa-user-graduate"))
 
+                ),
+
+                menuItem("PFU Analysis",
+                         tabName = "energyecon",
+                         icon = icon("money-bill-wave", verify_fa = FALSE),
+                         # badgeLabel = "Coming Soon",
+                         # badgeColor = "orange"
+                         menuItem("Rebound Space", tabName = "rebound_space", icon = icon("compress", verify_fa = FALSE)),
+                         menuItem("Decoupling Space", tabName = "decoupling_space", icon = icon("book", verify_fa = FALSE))
                 ),
 
                 menuItem("Rebound",
@@ -181,13 +188,6 @@ ui = dashboardPage(
                 menuItem("Net Energy Analysis",
                          tabName = "netenergy",
                          icon = icon("balance-scale-left", verify_fa = FALSE),
-                         badgeLabel = "Coming Soon",
-                         badgeColor = "orange"
-                         ),
-
-                menuItem("Energy-Economy",
-                         tabName = "energyecon",
-                         icon = icon("money-bill-wave", verify_fa = FALSE),
                          badgeLabel = "Coming Soon",
                          badgeColor = "orange"
                          ),
@@ -240,14 +240,19 @@ ui = dashboardPage(
       tabItem(tabName = "fu_efficiencies",
               etaplotsUI(id = "fu_id_1")),
 
-      tabItem(tabName = "rebound_space",
-              rebound_spaceUI(id = "rebound_id_1")),
-
       tabItem(tabName = "ecc",
               eccUI(id = "ecc_id_1")),
 
       # tabItem(tabName = "documentation",
       #         documentationUI(id = "doc1")),
+
+      ## PFU Analysis - UI
+      tabItem(tabName = "rebound_space",
+              rebound_spaceUI(id = "rebound_id_1")),
+
+      tabItem(tabName = "decoupling_space",
+              decoupling_spaceUI(id = "decsp_id_1")),
+
 
 
       ## Rebound modules - UI
@@ -263,7 +268,9 @@ ui = dashboardPage(
       tabItem(tabName = "citation_rebound",
               citation_reboundUI(id = "citreb_id_1")),
 
-      ## Other modules - UI
+      ## Energy Economy modules - UI
+      tabItem(tabName = "decoupling_space",
+              decoupling_spaceUI(id = "decsp_id_1")),
 
       # Related resources UI
       tabItem(tabName = "relatedresources",
@@ -346,13 +353,17 @@ server <- function(input, output, session) {
              id = "fu_id_1",
              comp_effic_tables_prepped)
 
+  callModule(module = ecc,
+             id = "ecc_id_1")
+
+  ## PFU Analysis modules
   callModule(module = rebound_space,
              id = "rebound_id_1",
              rebound_space_data_prepped)
 
-  callModule(module = ecc,
-             id = "ecc_id_1",
-             psut_useful)
+  callModule(module = decoupling_space,
+             id = "decsp_id_1",
+             pfuex_econ)
 
 
   ## Rebound modules
@@ -366,7 +377,6 @@ server <- function(input, output, session) {
              id = "dashreb_id_1")
 
   # Calls rebound citation module
-
 
 }
 

@@ -19,56 +19,58 @@ etaplotsUI <- function(id) {
                     )
            ),
 
-    box(title = "Variables",
-        solidHeader = TRUE,
-        width = 2,
+    tabBox(width = 2,
+           tabPanel(title = "Options",
 
-        selectizeInput(inputId = ns("country"),
-                       label = "Country:",
-                       choices = countries,
-                       multiple = TRUE
-                       %>% sort()),
+                    selectizeInput(inputId = ns("country"),
+                                   label = "Country:",
+                                   choices = country_options,
+                                   multiple = TRUE
+                                   %>% sort()),
 
-        # selectInput(inputId = ns("metric"),
-        #             label = "Metric",
-        #             choices = c(`Energy efficiency` = "eta.fu",
-        #                         `Exergy efficiency` = "etaX.fu"#,
-        #                         # `Exergy-to-energy ratio` = "phi.u"
-        #                         )),
+                    # selectInput(inputId = ns("metric"),
+                    #             label = "Metric",
+                    #             choices = c(`Energy efficiency` = "eta.fu",
+                    #                         `Exergy efficiency` = "etaX.fu"#,
+                    #                         # `Exergy-to-energy ratio` = "phi.u"
+                    #                         )),
 
-        selectInput(inputId = ns("machine"),
-                    label = "Final-to-useful machine:",
-                    choices = unique(comp_effic_tables_prepped$Machine)
-                    %>% sort()),
+                    selectInput(inputId = ns("machine"),
+                                label = "Final-to-useful machine:",
+                                choices = unique(comp_effic_tables_prepped$Machine)
+                                %>% sort()),
 
-        selectInput(inputId = ns("euproduct"),
-                    label = "Useful product:",
-                    choices = unique(comp_effic_tables_prepped$Eu.product)
-                    %>% sort()),
+                    selectInput(inputId = ns("euproduct"),
+                                label = "Useful product:",
+                                choices = unique(comp_effic_tables_prepped$Eu.product)
+                                %>% sort()),
 
-        selectInput(inputId = ns("dataformat"),
-                    label = "Data Format:",
-                    choices = c("Wide", "Long")),
+                    selectInput(inputId = ns("dataformat"),
+                                label = "Data Format:",
+                                choices = c("Wide", "Long"))
 
-        tags$h5(tags$b("Download Selected Data")),
+                    ),
 
-        downloadButton(outputId = ns("download_data"),
-                       label = "Download",
-                       class = NULL,
-                       icon = shiny::icon("download")),
+           tabPanel(title = "Download",
 
-        tags$h5(tags$b("Download All Data")),
+                    tags$h5(tags$b("Download Selected Data")),
 
-        downloadButton(outputId = ns("download_alldata"),
-                       label = "Download",
-                       class = NULL,
-                       icon = shiny::icon("download"))
+                    downloadButton(outputId = ns("download_data"),
+                                   label = "Download",
+                                   class = NULL,
+                                   icon = shiny::icon("download")),
 
-        ) # Closes variables box
+                    tags$h5(tags$b("Download All Data")),
 
-  ) # Closes fluidrow
+                    downloadButton(outputId = ns("download_alldata"),
+                                   label = "Download",
+                                   class = NULL,
+                                   icon = shiny::icon("download"))
+                    )
+           )
+    )
 
-} # Closes UI
+}
 
 # Establishes the server module function
 etaplots <- function(input, output, session,

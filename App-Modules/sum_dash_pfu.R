@@ -24,7 +24,7 @@ sumdashplotsUI <- function(id) {
 
         selectizeInput(inputId = ns("country"),
                        label = "Country:",
-                       choices = countries,
+                       choices = country_options,
                        width = "150px",
                        options = list(dropdownParent = 'body')),
 
