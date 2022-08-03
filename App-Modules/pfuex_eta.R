@@ -1,3 +1,6 @@
+# Loads required packages
+library(tidyverse)
+
 # Establishes UI module function
 pfuex_etaUI <- function(id) {
   ns <- NS(id)
@@ -101,15 +104,39 @@ pfuex_etaUI <- function(id) {
            ),
 
            tabPanel(title = "Download",
-                    tags$h5(tags$b("Download Selected Data")),
 
+                    tags$h5(tags$b("Download Selected Data")),
+                    tags$div(class="noindent",
+                             tags$ul(style="font-size:75%; list-style: none; margin:0; padding:0",
+                                     tags$li("Includes efficiency data as selected in the Options tab.")
+                             )
+                    ),
                     downloadButton(outputId = ns("download_data"),
                                    label = "Download",
                                    class = NULL,
                                    icon = shiny::icon("download")),
 
-                    tags$h5(tags$b("Download All Data")),
+                    tags$br(),
 
+                    tags$h5(tags$b("Selected Efficiency Consumption Data")),
+                    tags$div(class="noindent",
+                             tags$ul(style="font-size:75%; list-style: none; margin:0; padding:0",
+                                     tags$li("Includes all efficiency data for the selected countries in the Options tab.")
+                             )
+                    ),
+                    downloadButton(outputId = ns("download_country_data"),
+                                   label = "Download",
+                                   class = NULL,
+                                   icon = shiny::icon("download")),
+
+                    tags$br(),
+
+                    tags$h5(tags$b("Download All Data")),
+                    tags$div(
+                      tags$ul(style="font-size:75%; list-style: none; margin:0; padding:0",
+                              tags$li("Includes all efficiency data for all countries.")
+                      )
+                    ),
                     downloadButton(outputId = ns("download_alldata"),
                                    label = "Download",
                                    class = NULL,
@@ -371,10 +398,12 @@ pfuex_eta <- function(input, output, session,
 
     filename = function() {
 
-      paste("PFU_",
-            as.character(unique(selected_data_consumption()$Aggregation.by)),
-            ".Consumption.Data_",
-            Sys.Date(),
+      paste("PFU.Efficiency.Data.",
+            as.character(gsub(x = gsub(x = Sys.time(),
+                                       pattern = "\\s",
+                                       replacement = "."),
+                              pattern = ":",
+                              replacement = "-")),
             ".csv",
             sep="")
     },
@@ -385,13 +414,13 @@ pfuex_eta <- function(input, output, session,
 
       if(input$dataformat == "Long"){
 
-        data <- selected_data_consumption() %>%
+        data <- PSUT_Eta_Re_all_St_pfu_plotdata() %>%
           as.data.frame()
 
 
       } else if (input$dataformat == "Wide") {
 
-        data <- selected_data_consumption() %>%
+        data <- PSUT_Eta_Re_all_St_pfu_plotdata() %>%
           as.data.frame() %>%
           tidyr::pivot_wider(names_from = "Year",
                              values_from = "Eta")
@@ -402,7 +431,56 @@ pfuex_eta <- function(input, output, session,
 
       }
 
-      write.csv(data, file)
+      write.csv(data, file, row.names = FALSE)
+    }
+
+  )
+
+  # Download all allocations data for the countries selected in the options tab
+  output$download_country_data <- downloadHandler(
+
+    filename = function() {
+
+      paste0("PFU.",
+             gsub(x = toString(unique(PSUT_Eta_Re_all_St_pfu_plotdata()$Country)),
+                  pattern = ",\\s",
+                  replacement = "."),
+             ".Efficiency.Data.",
+             gsub(x = gsub(x = Sys.time(),
+                           pattern = "\\s",
+                           replacement = "."),
+                  pattern = ":",
+                  replacement = "-"),
+             ".csv",
+             sep="")
+    },
+
+    content = function(file) {
+
+      req(input$dataformat)
+
+      if(input$dataformat == "Long"){
+
+        data <- PSUT_Eta_Re_all_St_pfu_prepped %>%
+          dplyr::filter(Country %in% input$country) %>%
+          as.data.frame()
+
+
+      } else if (input$dataformat == "Wide") {
+
+        data <- PSUT_Eta_Re_all_St_pfu_prepped %>%
+          as.data.frame() %>%
+          dplyr::filter(Country %in% input$country) %>%
+          tidyr::pivot_wider(names_from = "Year",
+                             values_from = ".values")
+
+      } else {
+
+        print("Error")
+
+      }
+
+      write.csv(data, file, row.names = FALSE)
     }
 
   )
@@ -412,8 +490,12 @@ pfuex_eta <- function(input, output, session,
 
     filename = function() {
 
-      paste("PFU_All.Consumption.Data_",
-            Sys.Date(),
+      paste("PFU.All.Efficiency.Data.",
+            as.character(gsub(x = gsub(x = Sys.time(),
+                                       pattern = "\\s",
+                                       replacement = "."),
+                              pattern = ":",
+                              replacement = "-")),
             ".csv",
             sep="")
     },
@@ -424,13 +506,13 @@ pfuex_eta <- function(input, output, session,
 
       if(input$dataformat == "Long"){
 
-        data <- Agg_all_data %>%
+        data <- PSUT_Eta_Re_all_St_pfu_prepped %>%
           as.data.frame()
 
 
       } else if (input$dataformat == "Wide") {
 
-        data <- Agg_all_data %>%
+        data <- PSUT_Eta_Re_all_St_pfu_prepped %>%
           as.data.frame() %>%
           tidyr::pivot_wider(names_from = "Year",
                              values_from = "Eta")
@@ -441,7 +523,7 @@ pfuex_eta <- function(input, output, session,
 
       }
 
-      write.csv(data, file)
+      write.csv(data, file, row.names = FALSE)
     }
 
   )

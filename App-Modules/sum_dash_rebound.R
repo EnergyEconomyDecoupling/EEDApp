@@ -1,3 +1,6 @@
+# Loads required packages
+library(tidyverse)
+
 # Establishes UI module function
 rebound_dashUI <- function(id) {
 

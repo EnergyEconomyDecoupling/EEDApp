@@ -34,6 +34,7 @@ eccUI <- function(id) {
           inputId = ns("country"),
           label = "Country:",
           choices = country_options,
+          selected = c("Africa"),
           width = "100%",
           options = list(dropdownParent = 'body')),
 
@@ -44,9 +45,12 @@ eccUI <- function(id) {
           width = "100%",
           options = list(dropdownParent = 'body')),
 
-        # style = "z-index:1002;",
+        downloadButton(outputId = ns("download_ecc"),
+                       label = "Download ECC",
+                       class = NULL,
+                       icon = shiny::icon("download")),
 
-        cellWidths = c("80%", "10%", "10%"),
+        cellWidths = c("70%", "10%", "10%", "10%"),
 
         cellArgs = list(style = "vertical-align: center;
                                   padding-right: 6px;
@@ -135,5 +139,26 @@ ecc <- function(input, output, session,
 
 
   })
+
+  # DOwnload energy conversion chain xlsx file
+  output$download_ecc <- downloadHandler(
+
+    filename = function() {
+
+      paste("PFU.ECC.",
+            input$year,
+            ".",
+            input$country,
+            ".xlsx",
+            sep="")
+    },
+
+    content = function(file) {
+
+      Recca::write_ecc_to_excel(.psut_data = selected_data_2(),
+                                path = file)
+    }
+
+  )
 
 }

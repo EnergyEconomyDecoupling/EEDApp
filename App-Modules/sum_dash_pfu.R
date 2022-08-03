@@ -25,13 +25,21 @@ sumdashplotsUI <- function(id) {
         selectizeInput(inputId = ns("country"),
                        label = "Country:",
                        choices = country_options,
-                       width = "150px",
+                       width = "125px",
+                       options = list(dropdownParent = 'body')),
+
+        selectizeInput(inputId = ns("iea_andor_mw"),
+                       label = "IEA and/or MW:",
+                       choices = c(IEA = "IEA",
+                                   MW = "MW",
+                                   Both = "both"),
+                       width = "125px",
                        options = list(dropdownParent = 'body')),
 
         selectizeInput(inputId = ns("EorX"),
                        label = "Energy Quantification:",
                        choices = c(Energy = "E", `Exergy` = "X"),
-                       width = "150px",
+                       width = "125px",
                        options = list(dropdownParent = 'body')),
 
         selectizeInput(inputId = ns("stage"),
@@ -39,7 +47,7 @@ sumdashplotsUI <- function(id) {
                        choices = c(Primary = "Primary",
                                    Final = "Final",
                                    Useful = "Useful"),
-                       width = "150px",
+                       width = "125px",
                        options = list(dropdownParent = 'body')),
 
         selectizeInput(inputId = ns("gross_net"),
@@ -47,7 +55,7 @@ sumdashplotsUI <- function(id) {
                        choices = c(Gross = "Gross",
                                    Net = "Net")
                        %>% sort(),
-                       width = "150px",
+                       width = "125px",
                        options = list(dropdownParent = 'body')),
 
         # selectizeInput(inputId = ns("percap"),
@@ -59,13 +67,13 @@ sumdashplotsUI <- function(id) {
         selectizeInput(inputId = ns("legend"),
                        label = "Show Legend:",
                        choices = c(Yes = "TRUE", No = "FALSE"),
-                       width = "150px",
+                       width = "125px",
                        options =  list(dropdownParent = 'body')),
 
         selectizeInput(inputId = ns("stackfill"),
                        label = "Stack or Fill Area Plots:",
                        choices = c(Stack = "Stack", Fill = "Fill"),
-                       width = "150px",
+                       width = "125px",
                        options = list(dropdownParent = 'body')),
 
         actionButton(inputId = ns("pfu_dash_button"),

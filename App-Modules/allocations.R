@@ -48,14 +48,37 @@ allocplotsUI <- function(id) {
           tabPanel(title = "Download",
 
                    tags$h5(tags$b("Selected Allocation Data")),
-
+                   tags$div(class="noindent",
+                            tags$ul(style="font-size:75%; list-style: none; margin:0; padding:0",
+                                    tags$li("Includes allocations data as selected in the Options tab.")
+                            )
+                   ),
                    downloadButton(outputId = ns("download_data"),
                                   label = "Download",
                                   class = NULL,
                                   icon = shiny::icon("download")),
 
-                   tags$h5(tags$b("All Allocation Data")),
+                   tags$br(),
 
+                   tags$h5(tags$b("Selected Countries Allocation Data")),
+                   tags$div(class="noindent",
+                            tags$ul(style="font-size:75%; list-style: none; margin:0; padding:0",
+                                    tags$li("Includes all allocations data for the selected countries in the Options tab.")
+                            )
+                   ),
+                   downloadButton(outputId = ns("download_country_data"),
+                                  label = "Download",
+                                  class = NULL,
+                                  icon = shiny::icon("download")),
+
+                   tags$br(),
+
+                   tags$h5(tags$b("All Allocation Data")),
+                   tags$div(
+                     tags$ul(style="font-size:75%; list-style: none; margin:0; padding:0",
+                             tags$li("Includes all allocations data for all countries.")
+                     )
+                   ),
                    downloadButton(outputId = ns("download_alldata"),
                                   label = "Download",
                                   class = NULL,
@@ -74,7 +97,7 @@ allocplots <- function(input, output, session,
                        dataformat) {
 
   # Creates a dataframe with the selected country, efproduct, and destination
-  selected_data <- reactive({
+  selected_allocations_data <- reactive({
 
     validate(
       need(input$country != "", "Please select atleast one Country"),
@@ -115,7 +138,7 @@ allocplots <- function(input, output, session,
 
   # Final Energy carrier-Destination to Machine-useful work allocation plots
   output$allocations_plot <- renderPlotly({
-      p <- ggplot2::ggplot(data = selected_data()) +
+      p <- ggplot2::ggplot(data = selected_allocations_data()) +
         ggplot2::geom_area(mapping = aes(x = Year,
                                          y = .values,
                                          fill = Machine_Eu.product),
@@ -145,7 +168,7 @@ allocplots <- function(input, output, session,
 
     if(input$dataformat == "Long"){
 
-      data_long <- selected_data() %>%
+      data_long <- selected_allocations_data() %>%
         as.data.frame()
 
       allocations_table <- DT::datatable(data = data_long,
@@ -177,7 +200,7 @@ allocplots <- function(input, output, session,
 
     } else if (input$dataformat == "Wide") {
 
-      data_wide <- selected_data() %>%
+      data_wide <- selected_allocations_data() %>%
         as.data.frame() %>%
         tidyr::pivot_wider(names_from = "Year",
                            values_from = ".values")
@@ -223,14 +246,20 @@ allocplots <- function(input, output, session,
 
     filename = function() {
 
-      paste("PFU_",
-            as.character(unique(selected_data()$Ef.product)),
-            "_",
-            as.character(unique(selected_data()$Destination)),
-            "_",
-            Sys.Date(),
-            ".csv",
-            sep="")
+      paste0("PFU.",
+             gsub(x = toString(unique(selected_allocations_data()$Destination)),
+                  pattern = "/",
+                  replacement = ""),
+             ".",
+             toString(unique(selected_allocations_data()$Ef.product)),
+             ".Allocations.Data.",
+             gsub(x = gsub(x = Sys.time(),
+                           pattern = "\\s",
+                           replacement = "."),
+                  pattern = ":",
+                  replacement = "-"),
+             ".csv",
+             sep="")
     },
 
     content = function(file) {
@@ -239,13 +268,13 @@ allocplots <- function(input, output, session,
 
       if(input$dataformat == "Long"){
 
-        data <- selected_data() %>%
+        data <- selected_allocations_data() %>%
           as.data.frame()
 
 
       } else if (input$dataformat == "Wide") {
 
-        data <- selected_data() %>%
+        data <- selected_allocations_data() %>%
           as.data.frame() %>%
           tidyr::pivot_wider(names_from = "Year",
                              values_from = ".values")
@@ -256,7 +285,56 @@ allocplots <- function(input, output, session,
 
       }
 
-      write.csv(data, file)
+      write.csv(data, file, row.names = FALSE)
+    }
+
+  )
+
+  # Download all allocations data for the countries selected in the options tab
+  output$download_country_data <- downloadHandler(
+
+    filename = function() {
+
+      paste0("PFU.",
+             gsub(x = toString(unique(selected_allocations_data()$Country)),
+                  pattern = ",\\s",
+                  replacement = "."),
+             ".Allocations.Data.",
+             gsub(x = gsub(x = Sys.time(),
+                           pattern = "\\s",
+                           replacement = "."),
+                  pattern = ":",
+                  replacement = "-"),
+             ".csv",
+             sep="")
+    },
+
+    content = function(file) {
+
+      req(input$dataformat)
+
+      if(input$dataformat == "Long"){
+
+        data <- comp_alloc_tables_prepped %>%
+          dplyr::filter(Country %in% input$country) %>%
+          as.data.frame()
+
+
+      } else if (input$dataformat == "Wide") {
+
+        data <- comp_alloc_tables_prepped %>%
+          as.data.frame() %>%
+          dplyr::filter(Country %in% input$country) %>%
+          tidyr::pivot_wider(names_from = "Year",
+                             values_from = ".values")
+
+      } else {
+
+        print("Error")
+
+      }
+
+      write.csv(data, file, row.names = FALSE)
     }
 
   )
@@ -266,10 +344,14 @@ allocplots <- function(input, output, session,
 
     filename = function() {
 
-      paste("PFU_",
-            Sys.Date(),
-            ".csv",
-            sep="")
+      paste0("PFU.All.Allocations.Data.",
+             gsub(x = gsub(x = Sys.time(),
+                           pattern = "\\s",
+                           replacement = "."),
+                  pattern = ":",
+                  replacement = "-"),
+             ".csv",
+             sep="")
     },
 
     content = function(file) {
@@ -295,7 +377,7 @@ allocplots <- function(input, output, session,
 
       }
 
-      write.csv(data, file)
+      write.csv(data, file, row.names = FALSE)
     }
 
   )

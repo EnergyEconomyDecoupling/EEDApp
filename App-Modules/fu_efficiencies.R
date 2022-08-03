@@ -54,14 +54,37 @@ etaplotsUI <- function(id) {
            tabPanel(title = "Download",
 
                     tags$h5(tags$b("Download Selected Data")),
-
+                    tags$div(class="noindent",
+                             tags$ul(style="font-size:75%; list-style: none; margin:0; padding:0",
+                                     tags$li("Includes efficiency data as selected in the Options tab.")
+                             )
+                    ),
                     downloadButton(outputId = ns("download_data"),
                                    label = "Download",
                                    class = NULL,
                                    icon = shiny::icon("download")),
 
-                    tags$h5(tags$b("Download All Data")),
+                    tags$br(),
 
+                    tags$h5(tags$b("Selected Countries Efficiency Data")),
+                    tags$div(class="noindent",
+                             tags$ul(style="font-size:75%; list-style: none; margin:0; padding:0",
+                                     tags$li("Includes all efficiency data for the selected countries in the Options tab.")
+                             )
+                    ),
+                    downloadButton(outputId = ns("download_country_data"),
+                                   label = "Download",
+                                   class = NULL,
+                                   icon = shiny::icon("download")),
+
+                    tags$br(),
+
+                    tags$h5(tags$b("Download All Data")),
+                    tags$div(
+                      tags$ul(style="font-size:75%; list-style: none; margin:0; padding:0",
+                              tags$li("Includes all efficiency data for all countries.")
+                      )
+                    ),
                     downloadButton(outputId = ns("download_alldata"),
                                    label = "Download",
                                    class = NULL,
@@ -247,6 +270,55 @@ etaplots <- function(input, output, session,
       }
 
       write.csv(data, file)
+    }
+
+  )
+
+  # Download all efficiency data for the countries selected in the options tab
+  output$download_country_data <- downloadHandler(
+
+    filename = function() {
+
+      paste0("PFU.",
+             gsub(x = toString(unique(selected_data()$Country)),
+                  pattern = ",\\s",
+                  replacement = "."),
+             ".Efficiency.Data.",
+             gsub(x = gsub(x = Sys.time(),
+                           pattern = "\\s",
+                           replacement = "."),
+                  pattern = ":",
+                  replacement = "-"),
+             ".csv",
+             sep="")
+    },
+
+    content = function(file) {
+
+      req(input$dataformat)
+
+      if(input$dataformat == "Long"){
+
+        data <- eta_data %>%
+          dplyr::filter(Country %in% input$country) %>%
+          as.data.frame()
+
+
+      } else if (input$dataformat == "Wide") {
+
+        data <- eta_data %>%
+          as.data.frame() %>%
+          dplyr::filter(Country %in% input$country) %>%
+          tidyr::pivot_wider(names_from = "Year",
+                             values_from = ".values")
+
+      } else {
+
+        print("Error")
+
+      }
+
+      write.csv(data, file, row.names = FALSE)
     }
 
   )

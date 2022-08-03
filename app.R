@@ -23,12 +23,18 @@ library(tidyverse)
 # Load specific visualization packages
 library(plotly)
 library(scales)
-library(xtable) #
-library(colorspace) #
+library(DT)
 
 # Load Energy-Economy Decoupling organisation related packages
 library(ReboundTools)
 library(MKHthemes)
+
+#
+library(pwt10)
+library(targets)
+
+# Load constants
+source("App-Modules/constants.R", local = TRUE)
 
 # Loads shiny modules to get and wrangle data
 source("App-Modules/load_data.R", local = TRUE)
@@ -48,6 +54,7 @@ source("App-Modules/fu_efficiencies.R", local = TRUE)
 source("App-Modules/ecc.R", local = TRUE)
 
 # Load PFU Analysis modules
+source("App-Modules/pfuanalysis_dashboard.R", local = TRUE)
 source("App-Modules/rebound_space.R", local = TRUE)
 source("App-Modules/decoupling_space.R", local = TRUE)
 
@@ -144,7 +151,7 @@ ui = dashboardPage(
 
                          menuItem("Introduction", tabName = "intro_pfu", icon = icon("book", verify_fa = FALSE)),
 
-                         menuItem("PFU Dashboard", tabName = "dashboard_pfu", icon = icon("chalkboard", verify_fa = FALSE)),
+                         menuItem("PFU Database Dashboard", tabName = "dashboard_pfu", icon = icon("chalkboard", verify_fa = FALSE)),
 
                          menuItem("PFU Consumption", tabName = "pfuex_cons", icon = icon("lightbulb")),
 
@@ -165,9 +172,11 @@ ui = dashboardPage(
                 menuItem("PFU Analysis",
                          tabName = "energyecon",
                          icon = icon("money-bill-wave", verify_fa = FALSE),
-                         # badgeLabel = "Coming Soon",
-                         # badgeColor = "orange"
+
+                         menuItem("PFU Analysis Dashboard", tabName = "dashboard_pfuanalysis", icon = icon("chalkboard", verify_fa = FALSE)),
+
                          menuItem("Rebound Space", tabName = "rebound_space", icon = icon("compress", verify_fa = FALSE)),
+
                          menuItem("Decoupling Space", tabName = "decoupling_space", icon = icon("book", verify_fa = FALSE))
                 ),
 
@@ -247,6 +256,9 @@ ui = dashboardPage(
       #         documentationUI(id = "doc1")),
 
       ## PFU Analysis - UI
+      tabItem(tabName = "dashboard_pfuanalysis",
+              pfuanalysis_dashUI(id = "dashpfuanalysis_id_1")),
+
       tabItem(tabName = "rebound_space",
               rebound_spaceUI(id = "rebound_id_1")),
 
@@ -268,9 +280,6 @@ ui = dashboardPage(
       tabItem(tabName = "citation_rebound",
               citation_reboundUI(id = "citreb_id_1")),
 
-      ## Energy Economy modules - UI
-      tabItem(tabName = "decoupling_space",
-              decoupling_spaceUI(id = "decsp_id_1")),
 
       # Related resources UI
       tabItem(tabName = "relatedresources",
@@ -357,6 +366,11 @@ server <- function(input, output, session) {
              id = "ecc_id_1")
 
   ## PFU Analysis modules
+  callModule(module = pfuanalysis_dash,
+             id = "dashpfuanalysis_id_1",
+             pfuex_econ,
+             rebound_space_data_prepped)
+
   callModule(module = rebound_space,
              id = "rebound_id_1",
              rebound_space_data_prepped)
@@ -364,7 +378,6 @@ server <- function(input, output, session) {
   callModule(module = decoupling_space,
              id = "decsp_id_1",
              pfuex_econ)
-
 
   ## Rebound modules
 

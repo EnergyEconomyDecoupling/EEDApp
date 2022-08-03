@@ -1,3 +1,6 @@
+# Loads required packages
+library(tidyverse)
+
 # Establishes UI module function
 pfuex_consUI <- function(id) {
   ns <- NS(id)
@@ -20,6 +23,20 @@ pfuex_consUI <- function(id) {
     tabBox(#title = "Variables",
            width = 2,
            tabPanel(title = "Options",
+                    selectizeInput(inputId = ns("country"),
+                                   label = "Country:",
+                                   choices = country_options,
+                                   multiple = TRUE,
+                                   width = "100%",
+                                   options = list(dropdownParent = 'body')),
+
+                    selectizeInput(inputId = ns("units"),
+                                   label = "Units:",
+                                   choices = exunit_options,
+                                   multiple = FALSE,
+                                   width = "100%",
+                                   options = list(dropdownParent = 'body')),
+
                     selectizeInput(inputId = ns("iea_andor_mw"),
                                    label = "IEA and/or MW:",
                                    choices = c(IEA = "IEA",
@@ -32,13 +49,6 @@ pfuex_consUI <- function(id) {
                                    label = "Index Data:",
                                    choices = c(Yes = "Yes",
                                                No = "No"),
-                                   width = "100%",
-                                   options = list(dropdownParent = 'body')),
-
-                    selectizeInput(inputId = ns("country"),
-                                   label = "Country:",
-                                   choices = country_options,
-                                   multiple = TRUE,
                                    width = "100%",
                                    options = list(dropdownParent = 'body')),
 
@@ -101,15 +111,39 @@ pfuex_consUI <- function(id) {
            ),
 
            tabPanel(title = "Download",
-                    tags$h5(tags$b("Download Selected Data")),
 
+                    tags$h5(tags$b("Download Selected Data")),
+                    tags$div(class="noindent",
+                      tags$ul(style="font-size:75%; list-style: none; margin:0; padding:0",
+                        tags$li("Includes consumption data as selected in the Options tab.")
+                      )
+                    ),
                     downloadButton(outputId = ns("download_data"),
                                    label = "Download",
                                    class = NULL,
                                    icon = shiny::icon("download")),
 
-                    tags$h5(tags$b("Download All Data")),
+                    tags$br(),
 
+                    tags$h5(tags$b("Selected Countries Consumption Data")),
+                    tags$div(class="noindent",
+                             tags$ul(style="font-size:75%; list-style: none; margin:0; padding:0",
+                                     tags$li("Includes all consumption data for the selected countries in the Options tab.")
+                             )
+                    ),
+                    downloadButton(outputId = ns("download_country_data"),
+                                   label = "Download",
+                                   class = NULL,
+                                   icon = shiny::icon("download")),
+
+                    tags$br(),
+
+                    tags$h5(tags$b("Download All Data")),
+                    tags$div(
+                             tags$ul(style="font-size:75%; list-style: none; margin:0; padding:0",
+                               tags$li("Includes PFU EX consumption data for all countries.")
+                             )
+                    ),
                     downloadButton(outputId = ns("download_alldata"),
                                    label = "Download",
                                    class = NULL,
@@ -126,6 +160,7 @@ pfuex_consUI <- function(id) {
 # Establishes the server module function
 pfuex_cons <- function(input, output, session,
                        country,
+                       units,
                        EorX,
                        stage,
                        gross_net,
@@ -163,13 +198,19 @@ pfuex_cons <- function(input, output, session,
       dplyr::filter(Gross.Net == input$gross_net) %>%
       dplyr::filter(Stage %in% input$stage)
 
-    # if(input$indexed == "Yes"){
-    #
-    #   data_indexed <- data_filtered
-    #
-    # }
-    #
-    # data_final
+    if(input$units == "ktoe"){
+
+      data_final <- data_filtered
+
+    } else if(input$units == "EJ") {
+
+      data_final <- data_filtered %>%
+        dplyr::mutate(E.dot = E.dot * ktoe_to_ej,
+                      Units = "EJ")
+
+    }
+
+    return(data_final)
 
   })
 
@@ -257,7 +298,7 @@ pfuex_cons <- function(input, output, session,
       ggplot2::scale_x_continuous(limits = c(1960, 2020), breaks = seq(1960, 2020, by = 10)) +
 
       ggplot2::xlab("") +
-      ggplot2::ylab("E.dot [ktoe]") +
+      ggplot2::ylab(paste0("E.dot", " [", input$units, "]")) +
       MKHthemes::xy_theme() +
       ggplot2::theme(panel.spacing.y = unit(1, "lines"),
                      legend.position = legend_val)
@@ -371,10 +412,12 @@ pfuex_cons <- function(input, output, session,
 
     filename = function() {
 
-      paste("PFU_",
-            as.character(unique(selected_data_consumption()$Aggregation.by)),
-            ".Consumption.Data_",
-            Sys.Date(),
+      paste("PFU.Selected.Consumption.Data.",
+            as.character(gsub(x = gsub(x = Sys.time(),
+                                       pattern = "\\s",
+                                       replacement = "."),
+                              pattern = ":",
+                              replacement = "-")),
             ".csv",
             sep="")
     },
@@ -385,13 +428,13 @@ pfuex_cons <- function(input, output, session,
 
       if(input$dataformat == "Long"){
 
-        data <- selected_data_consumption() %>%
+        data <- PSUT_Agg_Re_all_St_pfu_plotdata() %>%
           as.data.frame()
 
 
       } else if (input$dataformat == "Wide") {
 
-        data <- selected_data_consumption() %>%
+        data <- PSUT_Agg_Re_all_St_pfu_plotdata() %>%
           as.data.frame() %>%
           tidyr::pivot_wider(names_from = "Year",
                              values_from = "E.dot")
@@ -402,7 +445,56 @@ pfuex_cons <- function(input, output, session,
 
       }
 
-      write.csv(data, file)
+      write.csv(data, file, row.names = FALSE)
+    }
+
+  )
+
+  # Download all allocations data for the countries selected in the options tab
+  output$download_country_data <- downloadHandler(
+
+    filename = function() {
+
+      paste0("PFU.",
+             gsub(x = toString(unique(PSUT_Agg_Re_all_St_pfu_plotdata()$Country)),
+                  pattern = ",\\s",
+                  replacement = "."),
+             ".Consumption.Data.",
+             gsub(x = gsub(x = Sys.time(),
+                           pattern = "\\s",
+                           replacement = "."),
+                  pattern = ":",
+                  replacement = "-"),
+             ".csv",
+             sep="")
+    },
+
+    content = function(file) {
+
+      req(input$dataformat)
+
+      if(input$dataformat == "Long"){
+
+        data <- PSUT_Agg_Re_all_St_pfu_prepped %>%
+          dplyr::filter(Country %in% input$country) %>%
+          as.data.frame()
+
+
+      } else if (input$dataformat == "Wide") {
+
+        data <- PSUT_Agg_Re_all_St_pfu_prepped %>%
+          as.data.frame() %>%
+          dplyr::filter(Country %in% input$country) %>%
+          tidyr::pivot_wider(names_from = "Year",
+                             values_from = ".values")
+
+      } else {
+
+        print("Error")
+
+      }
+
+      write.csv(data, file, row.names = FALSE)
     }
 
   )
@@ -412,8 +504,12 @@ pfuex_cons <- function(input, output, session,
 
     filename = function() {
 
-      paste("PFU_All.Consumption.Data_",
-            Sys.Date(),
+      paste("PFU.All.Consumption.Data.",
+            as.character(gsub(x = gsub(x = Sys.time(),
+                                       pattern = "\\s",
+                                       replacement = "."),
+                              pattern = ":",
+                              replacement = "-")),
             ".csv",
             sep="")
     },
@@ -424,13 +520,13 @@ pfuex_cons <- function(input, output, session,
 
       if(input$dataformat == "Long"){
 
-        data <- Agg_all_data %>%
+        data <- PSUT_Agg_Re_all_St_pfu_prepped %>%
           as.data.frame()
 
 
       } else if (input$dataformat == "Wide") {
 
-        data <- Agg_all_data %>%
+        data <- PSUT_Agg_Re_all_St_pfu_prepped %>%
           as.data.frame() %>%
           tidyr::pivot_wider(names_from = "Year",
                              values_from = "E.dot")
@@ -441,7 +537,7 @@ pfuex_cons <- function(input, output, session,
 
       }
 
-      write.csv(data, file)
+      write.csv(data, file, row.names = FALSE)
     }
 
   )

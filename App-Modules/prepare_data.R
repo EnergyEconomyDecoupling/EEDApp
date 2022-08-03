@@ -1,7 +1,10 @@
-# Prepare data for app
+library(tidyverse)
+
+################################################################################
+# Establish country options
+################################################################################
 
 # Create two column data frame for matching codes to names
-
 agg_regions  <- data.frame(PFU.code = c("Africa", "Asia_", "Europe", "MidEast",
                                         "NoAmr", "Oceania", "SoCeAmr", "Bunkers", "World"),
                            Country.wname = c("Africa", "Asia", "Europe", "Middle East",
@@ -17,16 +20,17 @@ names_codes <- country_conc %>%
 country_options <- names_codes$PFU.code
 names(country_options) <- names_codes$Country.wname
 
-#
-#
+################################################################################
+# Prepare raw targets data for use in the app
+################################################################################
+
 #
 PSUT_Agg_Re_all_St_pfu_prepped <- PSUT_Agg_Re_all_St_pfu %>%
   tidyr::pivot_longer(cols = c(Primary, Final, Useful),
                       values_to = "E.dot",
-                      names_to = "Stage")
+                      names_to = "Stage") %>%
+  dplyr::mutate(Units = "ktoe", .after = "Stage")
 
-#
-#
 #
 PSUT_Eta_Re_all_St_pfu_prepped <- PSUT_Eta_Re_all_St_pfu %>%
   dplyr::rename(`Primary-Final` = "eta_pf",
@@ -37,15 +41,11 @@ PSUT_Eta_Re_all_St_pfu_prepped <- PSUT_Eta_Re_all_St_pfu %>%
                       names_to = "Stages")
 
 #
-#
-#
 comp_alloc_tables_prepped <- comp_alloc_tables %>%
   dplyr::mutate(Machine_Eu.product = paste(comp_alloc_tables$Machine,
                                            " - ",
                                            comp_alloc_tables$Eu.product))
 
-#
-#
 #
 comp_effic_tables_prepped <- comp_effic_tables %>%
   dplyr::mutate(Machine_Eu.product = paste(comp_effic_tables$Machine,
@@ -53,26 +53,22 @@ comp_effic_tables_prepped <- comp_effic_tables %>%
                                            comp_effic_tables$Eu.product))
 
 #
-#
-#
 rebound_space_data_prepped <- PSUT_Agg_Re_all_St_pfu_prepped %>%
   dplyr::left_join(PSUT_Eta_Re_all_St_pfu_prepped,
                    by = c("Country", "Method", "Energy.type", "Gross.Net", "Year"))
 
-#
-#
-#
+
 
 # Calculate indexed total consumption data
 PSUT_Agg_Re_all_St_pfu_iyear <- PSUT_Agg_Re_all_St_pfu_prepped %>%
-  dplyr::group_by(Country, Method, Energy.type, Stage, Gross.Net) %>%
+  dplyr::group_by(Country, Method, Energy.type, Stage, Units, Gross.Net) %>%
   dplyr::filter(Year == min(Year)) %>%
   dplyr::select(-Year) %>%
   dplyr::rename("E.dot.iyear" = E.dot) %>%
   dplyr::ungroup()
 
 PSUT_Agg_Re_all_St_pfu_i <- PSUT_Agg_Re_all_St_pfu_prepped %>%
-  dplyr::left_join(PSUT_Agg_Re_all_St_pfu_iyear, by = c("Country", "Method", "Energy.type", "Stage", "Gross.Net")) %>%
+  dplyr::left_join(PSUT_Agg_Re_all_St_pfu_iyear, by = c("Country", "Method", "Energy.type", "Stage", "Units", "Gross.Net")) %>%
   dplyr::mutate("E.dot.i" = E.dot.iyear/E.dot) %>%
   dplyr::select(-E.dot.iyear)
 
@@ -91,7 +87,7 @@ PSUT_Eta_Re_all_St_pfu_i <- PSUT_Eta_Re_all_St_pfu_prepped %>%
 
 # Retrieving country-specific index years
 iyears_psut <- PSUT_Agg_Re_all_St_pfu_prepped %>%
-  dplyr::group_by(Country, Method, Energy.type, Stage, Gross.Net) %>%
+  dplyr::group_by(Country, Method, Energy.type, Stage, Units, Gross.Net) %>%
   dplyr::filter(Year == min(Year)) %>%
   dplyr::ungroup() %>%
   dplyr::select(Country, Year) %>%
@@ -102,31 +98,58 @@ iyears_psut <- PSUT_Agg_Re_all_St_pfu_prepped %>%
   # need to be revised
   dplyr::distinct()
 
+
+# Region aggregation map
+agg_map <- exemplar_lists %>%
+  tidyr::unnest(Exemplars) %>%
+  dplyr::filter(Exemplars %in% c("AFRI", "EURP", "MIDE", "SAMR", "ASIA",
+                                 "OCEN", "NAMR", "BUNK")) %>%
+  dplyr::select(-Year) %>%
+  dplyr::distinct()
+
 # Prepare pwt10.0 data
 # Remove rownames
 rownames(pwt10_data) <- NULL
 
 # Select relevant columns and rename columns
 pwt10_data_cleaned <- pwt10_data %>%
-  dplyr::select(isocode, year, rgdpe, rgdpo, rgdpna,
-                emp, avh, hc, rnna, rkna) %>%
+  dplyr::select(isocode, year, rgdpe, rgdpo, rgdpna) %>%
   dplyr::rename(Country = isocode,
                 Year = year,
                 rgdpe = rgdpe,
                 rgdpo = rgdpo,
-                rgdpna = rgdpna,
-                emp = emp,
-                avh = avh,
-                hc = hc,
-                K = rnna,
-                Kserv = rkna)
+                rgdpna = rgdpna)
+
+regions_pwt10_data_cleaned <- pwt10_data_cleaned %>%
+  dplyr::left_join(agg_map, by = c("Country")) %>%
+  dplyr::select(-Country) %>%
+  dplyr::group_by(Year, Exemplars) %>%
+  dplyr::summarise_all(sum, na.rm = TRUE) %>%
+  dplyr::rename(Country = Exemplars) %>%
+  dplyr::mutate(
+    Country = dplyr::case_when(
+      Country == "AFRI" ~ "Africa",
+      Country == "ASIA" ~ "Asia_",
+      Country == "EURP" ~ "Europe",
+      Country == "MIDE" ~ "MidEast",
+      Country == "NAMR" ~ "NoAmr",
+      Country == "OCEN" ~ "Oceania",
+      Country == "SAMR" ~ "SoCeAmr",
+      TRUE ~ as.character(Country)
+    )
+  )
+
+world_pwt10_data_cleaned <- pwt10_data_cleaned %>%
+  dplyr::select(-Country) %>%
+  dplyr::group_by(Year) %>%
+  dplyr::summarise_all(sum, na.rm = TRUE) %>%
+  dplyr::mutate(Country = "World")
 
 # Calculate L, the total number of hours worked in a given year
 # and Ladj, the total number of hours worked adjusted by the human capital index
 econ_data <- pwt10_data_cleaned %>%
-  dplyr::mutate("L" = (emp * avh * 1000000), .keep = "unused", .after = rgdpna) %>%
-  dplyr::mutate("Ladj" = (L * hc), .after = L) %>%
-  dplyr::select(-hc) %>%
+  rbind(regions_pwt10_data_cleaned) %>%
+  rbind(world_pwt10_data_cleaned) %>%
   # Remove rows with no GDP data
   dplyr::filter(!is.na(rgdpe))
 
@@ -163,8 +186,7 @@ econ_data_iyear <- econ_data %>%
   dplyr::group_by(Country) %>%
   dplyr::filter(Year == iYear) %>%
   magrittr::set_colnames(c("Country", "Year", "rgdpe.iyear", "rgdpo.iyear",
-                           "rgdpna.iyear", "L.iyear", "Ladj.iyear", "K.iyear",
-                           "Kserv.iyear", "iYear")) %>%
+                           "rgdpna.iyear", "iYear")) %>%
   dplyr::select(-Year) %>%
   dplyr::ungroup()
 
@@ -176,13 +198,7 @@ econ_data_i <- econ_data %>%
   dplyr::mutate("rgdpe.i" = ifelse(is.na(rgdpe), 1, rgdpe / rgdpe.iyear)) %>%
   dplyr::mutate("rgdpo.i" = ifelse(is.na(rgdpo), 1 , rgdpo / rgdpo.iyear)) %>%
   dplyr::mutate("rgdpna.i" = ifelse(is.na(rgdpna), 1 , rgdpna / rgdpna.iyear)) %>%
-  # dplyr::mutate("L.i" = ifelse(is.na(L), 1 , L / L.iyear)) %>%
-  # dplyr::mutate("Ladj.i" = ifelse(is.na(Ladj), 1 , Ladj / Ladj.iyear)) %>%
-  # dplyr::mutate("K.i" = ifelse(is.na(K), 1 , K / K.iyear)) %>%
-  # dplyr::mutate("Kserv.i" = ifelse(is.na(Kserv), 1 , Kserv / Kserv.iyear)) %>%
-  dplyr::select(Country, Year, iYear, rgdpe.i, rgdpo.i, rgdpna.i
-                #, L.i, Ladj.i, K.i, Kserv.i
-                )
+  dplyr::select(Country, Year, iYear, rgdpe.i, rgdpo.i, rgdpna.i)
 
 econ_data_i <- econ_data_i %>%
   dplyr::group_by(Country) %>%

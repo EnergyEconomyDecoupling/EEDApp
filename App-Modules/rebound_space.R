@@ -8,7 +8,7 @@ rebound_spaceUI <- function(id) {
   fluidRow(
     tabBox(title = "Rebound Space",
            # id = ,
-           width = 9,
+           width = 10,
            height = 950,
            tabPanel(
              title = "Plots",
@@ -52,7 +52,7 @@ rebound_spaceUI <- function(id) {
                     choices = c("1" = 1, "3" = 3, "5" = 5, "7" = 7)
         ),
         solidHeader = TRUE,
-        width = 3
+        width = 2
     ),
   )
 }

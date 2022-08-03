@@ -1,3 +1,6 @@
+# Loads required packages
+library(tidyverse)
+
 # Establishes UI module function
 decoupling_spaceUI <- function(id) {
   ns <- NS(id)
@@ -84,7 +87,6 @@ decoupling_space <- function(input, output, session,
                              country,
                              rollavg,
                              gdpmet,
-                             ds_plot,
                              facet_scales) {
 
   # Creates a dataframe with the selected country, efproduct, and destination
