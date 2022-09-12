@@ -179,7 +179,7 @@ pfuex_eta <- function(input, output, session,
       need(input$stages != "", "Please select atleast one ECC stage")
     )
 
-    data <- PSUT_Eta_Re_all_St_pfu_prepped
+    data <- EtaData
 
     data$Stages <- factor(data$Stages,
                           levels = c("Primary-Useful", "Primary-Final", "Final-Useful"))
@@ -461,14 +461,14 @@ pfuex_eta <- function(input, output, session,
 
       if(input$dataformat == "Long"){
 
-        data <- PSUT_Eta_Re_all_St_pfu_prepped %>%
+        data <- EtaData %>%
           dplyr::filter(Country %in% input$country) %>%
           as.data.frame()
 
 
       } else if (input$dataformat == "Wide") {
 
-        data <- PSUT_Eta_Re_all_St_pfu_prepped %>%
+        data <- EtaData %>%
           as.data.frame() %>%
           dplyr::filter(Country %in% input$country) %>%
           tidyr::pivot_wider(names_from = "Year",
@@ -506,13 +506,13 @@ pfuex_eta <- function(input, output, session,
 
       if(input$dataformat == "Long"){
 
-        data <- PSUT_Eta_Re_all_St_pfu_prepped %>%
+        data <- EtaData %>%
           as.data.frame()
 
 
       } else if (input$dataformat == "Wide") {
 
-        data <- PSUT_Eta_Re_all_St_pfu_prepped %>%
+        data <- EtaData %>%
           as.data.frame() %>%
           tidyr::pivot_wider(names_from = "Year",
                              values_from = "Eta")

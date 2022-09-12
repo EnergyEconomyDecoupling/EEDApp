@@ -30,9 +30,7 @@ sumdashplotsUI <- function(id) {
 
         selectizeInput(inputId = ns("iea_andor_mw"),
                        label = "IEA and/or MW:",
-                       choices = c(IEA = "IEA",
-                                   MW = "MW",
-                                   Both = "both"),
+                       choices = iea.mw_options,
                        width = "125px",
                        options = list(dropdownParent = 'body')),
 
@@ -58,12 +56,6 @@ sumdashplotsUI <- function(id) {
                        width = "125px",
                        options = list(dropdownParent = 'body')),
 
-        # selectizeInput(inputId = ns("percap"),
-        #                label = "Per Capita:",
-        #                choices = c(No = "abs", Yes = "pc"),
-        #                width = "150px",
-        #                options = list(dropdownParent = 'body')),
-
         selectizeInput(inputId = ns("legend"),
                        label = "Show Legend:",
                        choices = c(Yes = "TRUE", No = "FALSE"),
@@ -86,7 +78,7 @@ sumdashplotsUI <- function(id) {
     box(
       width = 6,
       # height = 450,
-      title = "Consumption by Total",
+      title = "Total Consumption",
       id = "con_by_total",
       closable = FALSE,
       # status = "warning",
@@ -99,6 +91,25 @@ sumdashplotsUI <- function(id) {
       sidebar_title = "Variables",
       sidebar_content = tagList(),
       plotlyOutput(outputId = ns("sumdash_total"))
+    ),
+
+    # Indexed Data box and sidebar
+    box(
+      width = 6,
+      # height = 450,
+      title = "Indexed Consumption",
+      id = "index_data",
+      closable = FALSE,
+      # status = "warning",
+      solidHeader = FALSE,
+      collapsible = TRUE,
+      enable_sidebar = TRUE,
+      sidebar_width = 25,
+      sidebar_start_open = FALSE,
+      sidebar_background = "#FFFFFF",
+      sidebar_title = "Variables",
+      sidebar_content = tagList(),
+      plotlyOutput(outputId = ns("sumdash_i"))
     ),
 
     # Consumption by product
@@ -124,7 +135,7 @@ sumdashplotsUI <- function(id) {
     box(
       width = 6,
       # height = 450,
-      title = "Consumption by Flow or Sector",
+      title = "Consumption by Sector",
       id = "con_by_flowsec",
       closable = FALSE,
       # status = "warning",
@@ -137,43 +148,7 @@ sumdashplotsUI <- function(id) {
       sidebar_title = "Variables",
       sidebar_content = tagList()#,
       # plotlyOutput(outputId = ns("sumdash_flowsec"))
-      ),
-
-    # Indexed Data box and sidebar
-    box(
-      width = 4,
-      # height = 450,
-      title = "Indexed Data",
-      id = "index_data",
-      closable = FALSE,
-      # status = "warning",
-      solidHeader = FALSE,
-      collapsible = TRUE,
-      enable_sidebar = TRUE,
-      sidebar_width = 25,
-      sidebar_start_open = FALSE,
-      sidebar_background = "#FFFFFF",
-      sidebar_title = "Variables",
-      sidebar_content = tagList()#,
-      # plotlyOutput(outputId = ns("sumdash_i"))
-      ),
-
-    # Decomposition Analysis box and sidebar
-    box(
-      width = 4,
-      # height = 450,
-      title = "Decomposition Analysis",
-      closable = FALSE,
-      # status = "warning",
-      solidHeader = FALSE,
-      collapsible = TRUE,
-      enable_sidebar = TRUE,
-      sidebar_width = 25,
-      sidebar_start_open = FALSE,
-      sidebar_background = "#FFFFFF",
-      sidebar_title = "Variables",
-      sidebar_content = tagList()
-    )
+      )
 
     )
 
@@ -181,23 +156,15 @@ sumdashplotsUI <- function(id) {
 
 # Establishes the server module function
 sumdashplots <- function(input, output, session,
-
                          EorX,
-
                          country,
-
                          stage,
-
                          stages_rs,
-
                          gross_net,
-
+                         iea_andor_mw,
                          rollavg,
-
                          legend,
-
                          stackfill
-
                          ) {
 
 ################################################################################
@@ -214,16 +181,17 @@ sumdashplots <- function(input, output, session,
 ################################################################################
 
 # Creates reactive data frame for total aggregate PFU EX
-  PSUT_Agg_Re_all_St_pfu_plotdata <- reactive({
+  AggData_plotdata <- reactive({
 
     validate(
       # need(input$stage != "", "Please select atleast one Energy Conversion Chain (ECC) stage")
     )
 
-    data <- PSUT_Agg_Re_all_St_pfu_prepped %>%
+    data <- AggData_i %>%
       dplyr::filter(Energy.type == input$EorX) %>%
       dplyr::filter(Gross.Net == input$gross_net) %>%
-      dplyr::filter(Country == input$country)
+      dplyr::filter(Country == input$country) %>%
+      dplyr::filter(IEA.MW == input$iea_andor_mw)
 
     data$Stage <- factor(data$Stage,
                          levels = c("Primary", "Final", "Useful"))
@@ -243,10 +211,10 @@ sumdashplots <- function(input, output, session,
             "Final" = "red",
             "Useful" = "orange")
 
-  # Plots indexed data
+  # Plots total data
   output$sumdash_total <- renderPlotly({
 
-    p <- ggplot2::ggplot(data = PSUT_Agg_Re_all_St_pfu_plotdata()) +
+    p <- ggplot2::ggplot(data = AggData_plotdata()) +
 
       ggplot2::geom_line(mapping = aes(x = Year,
                                        y = E.dot,
@@ -273,6 +241,39 @@ sumdashplots <- function(input, output, session,
                                    itemdoubleclick = TRUE)) #%>%
 
       # move_legend_annotation_no_facet(y = 0.925, mar = 80)
+
+  })
+
+  # Plots indexed data
+  output$sumdash_i <- renderPlotly({
+
+    p <- ggplot2::ggplot(data = AggData_plotdata()) +
+
+      ggplot2::geom_line(mapping = aes(x = Year,
+                                       y = E.dot.i,
+                                       # group = Stage,
+                                       color = Stage)) +
+
+      ggplot2::scale_colour_manual(values = cols) +
+
+      ggplot2::scale_x_continuous(limits = c(1960, 2020), breaks = seq(1960, 2020, by = 10)) +
+
+      ggplot2::xlab("") +
+      ggplot2::ylab("E.dot [ktoe]") +
+      MKHthemes::xy_theme()
+
+    p_plotly <- plotly::ggplotly(p, height = 400, tooltip = c("Year",
+                                                              "E.dot.i",
+                                                              "Stage"#,
+                                                              # "Energy.type",
+                                                              # "Gross.Net"
+    )) %>%
+
+      plotly::layout(showlegend = as.logical(input$legend),
+                     legend = list(itemclick = TRUE,
+                                   itemdoubleclick = TRUE)) #%>%
+
+    # move_legend_annotation_no_facet(y = 0.925, mar = 80)
 
   })
 

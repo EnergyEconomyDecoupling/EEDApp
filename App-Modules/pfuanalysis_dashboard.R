@@ -31,7 +31,7 @@ pfuanalysis_dashUI <- function(id) {
 
           selectizeInput(inputId = ns("iea_andor_mw"),
                          label = "IEA and/or MW:",
-                         choices = ieamw_options,
+                         choices = iea.mw_options,
                          width = "125px",
                          options = list(dropdownParent = 'body')),
 
@@ -229,12 +229,13 @@ pfuanalysis_dash <- function(input, output, session,
 
 
     data <- pfuex_econ %>%
-      dplyr::filter(Energy.type == input$EorX,
-                    Gross.Net == input$gross_net,
-                    Stage == input$stage,
-                    Country == input$country,
-                    GDP_Metric == input$gdpmet) %>%
-      dplyr::group_by(Country, Method, Energy.type, Gross.Net, Stage) %>%
+      dplyr::filter(Energy.type == input$EorX) %>%
+      dplyr::filter(Gross.Net == input$gross_net) %>%
+      dplyr::filter(Stage == input$stage) %>%
+      dplyr::filter(Country == input$country) %>%
+      dplyr::filter(GDP_Metric == input$gdpmet) %>%
+      dplyr::filter(IEA.MW == input$iea_andor_mw) %>%
+      dplyr::group_by(Country, Method, IEA.MW, Energy.type, Gross.Net, Stage) %>%
       dplyr::mutate(E.dot.CAAGR = calc_roll_caagr(metric = E.dot, period = as.numeric(input$rollavg), direction = "Center") * 100) %>%
       dplyr::mutate(GDP.CAAGR = calc_roll_caagr(metric = GDP, period = as.numeric(input$rollavg), direction = "Center") * 100) %>%
       dplyr::ungroup() %>%
@@ -259,12 +260,13 @@ pfuanalysis_dash <- function(input, output, session,
 
 
     data <- rebound_space_data_prepped %>%
-      dplyr::filter(Energy.type == input$EorX,
-                    Gross.Net == input$gross_net,
-                    Stage == input$stage,
-                    Stages ==input$stages,
-                    Country %in% input$country) %>%
-      dplyr::group_by(Country, Method, Energy.type, Gross.Net, Stage) %>%
+      dplyr::filter(Energy.type == input$EorX) %>%
+      dplyr::filter(Gross.Net == input$gross_net) %>%
+      dplyr::filter(Stage == input$stage) %>%
+      dplyr::filter(Stages ==input$stages) %>%
+      dplyr::filter(Country %in% input$country) %>%
+      dplyr::filter(IEA.MW == input$iea_andor_mw) %>%
+      dplyr::group_by(Country, Method, IEA.MW, Energy.type, Gross.Net, Stage) %>%
       dplyr::mutate(E.dot.CAAGR = calc_roll_caagr(metric = E.dot, period = as.numeric(input$rollavg), direction = "Center") * 100) %>%
       dplyr::mutate(Eta.CAAGR = calc_roll_caagr(metric = Eta, period = as.numeric(input$rollavg), direction = "Center") * 100) %>%
       dplyr::ungroup()
@@ -282,6 +284,7 @@ pfuanalysis_dash <- function(input, output, session,
       dplyr::filter(Stages == input$stages) %>%
       dplyr::filter(GDP_Metric == input$gdpmet) %>%
       dplyr::filter(Country == input$country) %>%
+      dplyr::filter(IEA.MW == input$iea_andor_mw)%>%
       dplyr::mutate(Eta.CAAGR = calc_roll_caagr(metric = Eta,
                                                 period = as.numeric(input$rollavg),
                                                 direction = "Center") * 100) %>%

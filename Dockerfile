@@ -16,8 +16,6 @@ COPY /app.R /app.R
 COPY /App-Modules /App-Modules
 ## www folder
 COPY /www /www
-## ReboundTools documenetation .Rmd file
-COPY /reboundtools_doc.Rmd /reboundtools_doc.Rmd
 
 # Expose port
 EXPOSE 3838

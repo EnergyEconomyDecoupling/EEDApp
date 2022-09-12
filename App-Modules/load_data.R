@@ -4,48 +4,45 @@ library(tidyverse)
 # Establish filepaths
 ################################################################################
 
-# # Set filepath to credentials sql database
-# credentials_path <- file.path("/pfu-output-data",
-#                               "EEDAppCredentials",
-#                               "credentials_database.sqlite")
-#
+# Set filepath to credentials sql database
+credentials_path <- file.path("Z:/",
+                              # "/pfu-output-data",
+                              "EEDAppCredentials",
+                              "credentials_database.sqlite")
+
 # # Establish filepaths to targets caches
-# pfu_path <- file.path("/pfu-output-data",
+# pfu_path <- file.path("Z:/",
+#                       # "/pfu-output-data",
 #                       "PipelineCaches",
 #                       "PFUDatabase_targets_2022-06-11",
 #                       "_targets")
 #
 #
-# pfuagg_path <- file.path("/pfu-output-data",
+# pfuagg_path <- file.path("Z:/",
+#                          # "/pfu-output-data",
 #                          "PipelineCaches",
 #                          "PFUAggDatabase_targets_2022-06-11",
 #                          "_targets")
-
-# Set filepath to credentials sql database
-credentials_path <- file.path("C:/Users/User/Desktop",
-                              "pfu-output-data",
-                              "EEDAppCredentials",
-                              "credentials_database.sqlite")
 
 # Establish filepaths to targets caches
 pfu_path <- file.path("C:/Users/User/Desktop",
                       "pfu-output-data",
                       "PipelineCaches",
-                      "PFUDatabase_targets_2022-06-11",
+                      "pfu_pipeline_cache_20220828T174431Z",
                       "_targets")
 
 
 pfuagg_path <- file.path("C:/Users/User/Desktop",
                          "pfu-output-data",
                          "PipelineCaches",
-                         "PFUAggDatabase_targets_2022-06-11",
+                         "pfu_agg_pipeline_cache_20220905T230423Z",
                          "_targets")
 
-# # Establish filepath to PWT 10.0 data.
-# pwt_path <- file.path("Z:\\",
-#                       #"/pfu-output-data",
-#                       "PWT10.0",
-#                       "pwt100.xlsx")
+# Establish filepath to PWT 10.0 data.
+pwt_path <- file.path("Z:\\",
+                      #"/pfu-output-data",
+                      "PWT10.0",
+                      "pwt100.csv")
 
 ################################################################################
 # PFUDatabase targets
@@ -69,37 +66,25 @@ comp_effic_tables <- targets::tar_read_raw(name = PFUDatabase::target_names$comp
 comp_phiu_tables <- targets::tar_read_raw(name = PFUDatabase::target_names$completed_phi_u_tables,
                                           store = pfu_path)
 
-psut_useful <- targets::tar_read_raw(name = "PSUTUsefulIEA",
-                                     store = pfu_path)
-
 
 ################################################################################
-# PFUAggDatabase targets
+# PFUAggDatabase targets pfu_agg_pipeline_cache_20220905T230423Z
 ################################################################################
 
-PSUT_Agg_Re_all_St_pfu <- targets::tar_read_raw(name = "PSUT_Agg_Re_all_St_pfu",
-                                                store = pfuagg_path)
+# # Calculate PFU aggregations #
+# PSUT_Re_all_Gr_all_Chop_all_St_pfd <- targets::tar_read_raw(name = "PSUT_Re_all_Gr_all_Chop_all_St_pfd",
+#                                                             store = pfuagg_path)
 
-PSUT_Eta_Re_all_St_pfu <- targets::tar_read_raw(name = "PSUT_Eta_Re_all_St_pfu",
-                                                store = pfuagg_path)
+# Calculate final demand sector aggregations #
+SectorAggEta <- targets::tar_read_raw(name = "SectorAggEta",
+                                      store = pfuagg_path)
 
-
-PSUT_IEA_Agg_Re_all_St_pfu <- targets::tar_read_raw(name = "PSUT_IEA_Agg_Re_all_St_pfu",
-                                                    store = pfuagg_path)
-
-PSUT_IEA_Eta_Re_all_St_pfu <- targets::tar_read_raw(name = "PSUT_IEA_Eta_Re_all_St_pfu",
-                                                    store = pfuagg_path)
-
-
-PSUT_MW_Agg_Re_all_St_pfu <- targets::tar_read_raw(name = "PSUT_MW_Agg_Re_all_St_pfu",
-                                                   store = pfuagg_path)
-
-PSUT_MW_Eta_Re_all_St_pfu <- targets::tar_read_raw(name = "PSUT_MW_Eta_Re_all_St_pfu",
-                                                   store = pfuagg_path)
+# PFU efficiencies #
+EtaPFU <- targets::tar_read_raw(name = "EtaPFU",
+                                store = pfuagg_path)
 
 ################################################################################
 # Load pwt10.0 data
 ################################################################################
-pwt10_data <- pwt10::pwt10.0 %>%
-  dplyr::filter(isocode %in% countries)
+pwt10_data <- read.csv(file = pwt_path)
 

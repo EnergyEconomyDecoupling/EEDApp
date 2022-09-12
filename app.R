@@ -2,6 +2,12 @@
 # Set-up
 ################################################################################
 
+# Use renv::dependencies() to check the packages the app depends on.
+# All functions other than those in {shiny}, {shinydashboard}, and {base} should
+# be prefixed by the package name, and the correct package space should be
+# loaded by renv::restore in the dockerfile of EEDAppBaseImage,
+# but each dependency should still be loaded below.
+
 # Load shiny related packages
 library(shiny)
 library(shinydashboard)
@@ -12,29 +18,37 @@ library(htmltools)
 library(htmlwidgets)
 library(cicerone)
 library(fontawesome)
-
-# Load credential management packages
 library(shinymanager)
 
 # Load general R packages
+library(targets)
 library(rmarkdown)
 library(tidyverse)
+library(rlang)
+library(lazyeval)
+library(knitr)
 
 # Load specific visualization packages
 library(plotly)
 library(scales)
 library(DT)
+library(networkD3)
 
 # Load Energy-Economy Decoupling organisation related packages
 library(ReboundTools)
 library(MKHthemes)
-
-#
-library(pwt10)
-library(targets)
+library(IEATools)
+library(Recca)
+library(PFUDatabase)
 
 # Load constants
 source("App-Modules/constants.R", local = TRUE)
+
+# Loads bespoke functions for use in the app
+source("App-Modules/utility_functions.R", local = TRUE)
+
+# Loads custom theme
+source("App-Modules/customTheme.R", local = TRUE)
 
 # Loads shiny modules to get and wrangle data
 source("App-Modules/load_data.R", local = TRUE)
@@ -46,12 +60,11 @@ source("App-Modules/relresources.R", local = TRUE)
 
 # Load PFU Database modules
 source("App-Modules/intro_pfu.R", local = TRUE)
-source("App-Modules/sum_dash_pfu.R", local = TRUE)
+source("App-Modules/pfudatabase_dashboard.R", local = TRUE)
 source("App-Modules/pfuex_cons.R", local = TRUE)
 source("App-Modules/pfuex_eta.R", local = TRUE)
 source("App-Modules/allocations.R", local = TRUE)
 source("App-Modules/fu_efficiencies.R", local = TRUE)
-source("App-Modules/ecc.R", local = TRUE)
 
 # Load PFU Analysis modules
 source("App-Modules/pfuanalysis_dashboard.R", local = TRUE)
@@ -60,15 +73,8 @@ source("App-Modules/decoupling_space.R", local = TRUE)
 
 # Load Rebound modules
 source("App-Modules/intro_rebound.R", local = TRUE)
-source("App-Modules/sum_dash_rebound.R", local = TRUE)
-source("App-Modules/reboundtools_rebound.R", local = TRUE)
+source("App-Modules/rebound_dashboard.R", local = TRUE)
 source("App-Modules/citation_rebound.R", local = TRUE)
-
-# Loads bespoke functions for use in the app
-source("App-Modules/utility_functions.R", local = TRUE)
-
-# Loads custom theme
-source("App-Modules/customTheme.R", local = TRUE)
 
 # Loads cicerone guides
 source("App-Modules/guides_pfu.R", local = TRUE)
@@ -159,12 +165,8 @@ ui = dashboardPage(
 
                          menuItem("Final-to-useful Allocations", tabName = "allocations", icon = icon("chart-pie", verify_fa = FALSE)),
 
-                         menuItem("Final-to-useful Efficiencies", tabName = "fu_efficiencies", icon = icon("line-chart", verify_fa = FALSE)),
+                         menuItem("Final-to-useful Efficiencies", tabName = "fu_efficiencies", icon = icon("line-chart", verify_fa = FALSE))#,
 
-                         menuItem("Energy Conversion Chain", tabName = "ecc", icon = icon("link", verify_fa = FALSE))#,
-                         #
-                         # menuItem("Database documentation", tabName = "documentation", icon = icon("book")),
-                         #
                          # menuItem("Citation", tabName = "citation_pfu", icon = icon("fa-user-graduate"))
 
                 ),
@@ -187,8 +189,6 @@ ui = dashboardPage(
                          menuItem("Introduction", tabName = "intro_rebound", icon = icon("book", verify_fa = FALSE)),
 
                          menuItem("Rebound Dashboard", tabName = "dashboard_rebound", icon = icon("chalkboard", verify_fa = FALSE)),
-
-                         menuItem("ReboundTools", tabName = "rebound_tools", icon = icon("r-project", verify_fa = FALSE)),
 
                          menuItem("Citation", tabName = "citation_rebound", icon = icon("user-graduate", verify_fa = FALSE))
 
@@ -249,12 +249,6 @@ ui = dashboardPage(
       tabItem(tabName = "fu_efficiencies",
               etaplotsUI(id = "fu_id_1")),
 
-      tabItem(tabName = "ecc",
-              eccUI(id = "ecc_id_1")),
-
-      # tabItem(tabName = "documentation",
-      #         documentationUI(id = "doc1")),
-
       ## PFU Analysis - UI
       tabItem(tabName = "dashboard_pfuanalysis",
               pfuanalysis_dashUI(id = "dashpfuanalysis_id_1")),
@@ -273,9 +267,6 @@ ui = dashboardPage(
 
       tabItem(tabName = "dashboard_rebound",
               rebound_dashUI(id = "dashreb_id_1")),
-
-      tabItem(tabName = "rebound_tools",
-              rebound_docUI(id = "docreb_id_1")),
 
       tabItem(tabName = "citation_rebound",
               citation_reboundUI(id = "citreb_id_1")),
@@ -361,9 +352,6 @@ server <- function(input, output, session) {
   callModule(module = etaplots,
              id = "fu_id_1",
              comp_effic_tables_prepped)
-
-  callModule(module = ecc,
-             id = "ecc_id_1")
 
   ## PFU Analysis modules
   callModule(module = pfuanalysis_dash,

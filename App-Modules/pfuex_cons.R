@@ -180,14 +180,14 @@ pfuex_cons <- function(input, output, session,
 ################################################################################
 
   # Creates reactive data frame for total aggregate PFU EX
-  PSUT_Agg_Re_all_St_pfu_plotdata <- reactive({
+  AggData_plotdata <- reactive({
 
     validate(
       need(input$country != "", "Please select atleast one country"),
       need(input$stage != "", "Please select atleast one ECC stage")
     )
 
-    data <- PSUT_Agg_Re_all_St_pfu_prepped
+    data <- AggData
 
     data$Stage <- factor(data$Stage,
                          levels = c("Primary", "Final", "Useful"))
@@ -237,7 +237,7 @@ pfuex_cons <- function(input, output, session,
       stringr::str_replace_all(",", "+") %>%
       rlang::parse_exprs()
 
-    plot_data <- PSUT_Agg_Re_all_St_pfu_plotdata()
+    plot_data <- AggData_plotdata()
 
     facet_variable_collapsed <- paste(input$facet_variable, collapse = " ")
 
@@ -333,7 +333,7 @@ pfuex_cons <- function(input, output, session,
 
     if(input$dataformat == "Long"){
 
-      data_long <- PSUT_Agg_Re_all_St_pfu_plotdata() %>%
+      data_long <- AggData_plotdata() %>%
         as.data.frame()
 
       consumption_table <- DT::datatable(data = data_long,
@@ -362,7 +362,7 @@ pfuex_cons <- function(input, output, session,
 
     } else if (input$dataformat == "Wide") {
 
-      data_wide <- PSUT_Agg_Re_all_St_pfu_plotdata() %>%
+      data_wide <- AggData_plotdata() %>%
         as.data.frame() %>%
         tidyr::pivot_wider(id_cols = c(Country, Method, Energy.type, Gross.Net, Stage),
                            names_from = "Year",
@@ -428,13 +428,13 @@ pfuex_cons <- function(input, output, session,
 
       if(input$dataformat == "Long"){
 
-        data <- PSUT_Agg_Re_all_St_pfu_plotdata() %>%
+        data <- AggData_plotdata() %>%
           as.data.frame()
 
 
       } else if (input$dataformat == "Wide") {
 
-        data <- PSUT_Agg_Re_all_St_pfu_plotdata() %>%
+        data <- AggData_plotdata() %>%
           as.data.frame() %>%
           tidyr::pivot_wider(names_from = "Year",
                              values_from = "E.dot")
@@ -456,7 +456,7 @@ pfuex_cons <- function(input, output, session,
     filename = function() {
 
       paste0("PFU.",
-             gsub(x = toString(unique(PSUT_Agg_Re_all_St_pfu_plotdata()$Country)),
+             gsub(x = toString(unique(AggData_plotdata()$Country)),
                   pattern = ",\\s",
                   replacement = "."),
              ".Consumption.Data.",
@@ -475,14 +475,14 @@ pfuex_cons <- function(input, output, session,
 
       if(input$dataformat == "Long"){
 
-        data <- PSUT_Agg_Re_all_St_pfu_prepped %>%
+        data <- AggData %>%
           dplyr::filter(Country %in% input$country) %>%
           as.data.frame()
 
 
       } else if (input$dataformat == "Wide") {
 
-        data <- PSUT_Agg_Re_all_St_pfu_prepped %>%
+        data <- AggData %>%
           as.data.frame() %>%
           dplyr::filter(Country %in% input$country) %>%
           tidyr::pivot_wider(names_from = "Year",
@@ -520,13 +520,13 @@ pfuex_cons <- function(input, output, session,
 
       if(input$dataformat == "Long"){
 
-        data <- PSUT_Agg_Re_all_St_pfu_prepped %>%
+        data <- AggData %>%
           as.data.frame()
 
 
       } else if (input$dataformat == "Wide") {
 
-        data <- PSUT_Agg_Re_all_St_pfu_prepped %>%
+        data <- AggData %>%
           as.data.frame() %>%
           tidyr::pivot_wider(names_from = "Year",
                              values_from = "E.dot")

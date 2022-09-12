@@ -8,9 +8,9 @@ gdp_options <- c(`Real` = "rgdpna",
                  `Output-side` = "rgdpo")
 
 # Establish IEA, MW, or Both options
-ieamw_options <- c(IEA = "IEA",
-                   MW = "MW",
-                   Both = "both")
+iea.mw_options <- c(IEA = "IEA",
+                    MW = "MW",
+                    Both = "Both")
 
 # Establish Energy quantification options
 ex_options <- c(Energy = "E",

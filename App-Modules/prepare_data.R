@@ -21,73 +21,98 @@ country_options <- names_codes$PFU.code
 names(country_options) <- names_codes$Country.wname
 
 ################################################################################
-# Prepare raw targets data for use in the app
+# Prepare aggregation map
 ################################################################################
 
-#
-PSUT_Agg_Re_all_St_pfu_prepped <- PSUT_Agg_Re_all_St_pfu %>%
-  tidyr::pivot_longer(cols = c(Primary, Final, Useful),
-                      values_to = "E.dot",
-                      names_to = "Stage") %>%
-  dplyr::mutate(Units = "ktoe", .after = "Stage")
+# Region aggregation map
+agg_map <- exemplar_lists %>%
+  tidyr::unnest(Exemplars) %>%
+  dplyr::filter(Exemplars %in% c("AFRI", "EURP", "MIDE", "SAMR", "ASIA",
+                                 "OCEN", "NAMR", "BUNK")) %>%
+  dplyr::select(-Year) %>%
+  dplyr::distinct()
 
-#
-PSUT_Eta_Re_all_St_pfu_prepped <- PSUT_Eta_Re_all_St_pfu %>%
-  dplyr::rename(`Primary-Final` = "eta_pf",
-                `Final-Useful` = "eta_fu",
-                `Primary-Useful` = "eta_pu") %>%
-  tidyr::pivot_longer(cols = c(`Primary-Final`, `Final-Useful`, `Primary-Useful`),
-                      values_to = "Eta",
-                      names_to = "Stages")
+################################################################################
+# Prepare input data
+################################################################################
 
-#
+# Efficiency Tables
 comp_alloc_tables_prepped <- comp_alloc_tables %>%
   dplyr::mutate(Machine_Eu.product = paste(comp_alloc_tables$Machine,
                                            " - ",
                                            comp_alloc_tables$Eu.product))
 
-#
+# Allocation Tables
 comp_effic_tables_prepped <- comp_effic_tables %>%
   dplyr::mutate(Machine_Eu.product = paste(comp_effic_tables$Machine,
                                            " - ",
                                            comp_effic_tables$Eu.product))
 
-#
-rebound_space_data_prepped <- PSUT_Agg_Re_all_St_pfu_prepped %>%
-  dplyr::left_join(PSUT_Eta_Re_all_St_pfu_prepped,
-                   by = c("Country", "Method", "Energy.type", "Gross.Net", "Year"))
+################################################################################
+# Prepare PFUAggDatabase outputs
+################################################################################
 
+EtaData <- EtaPFU %>%
+  dplyr::distinct(Country, Method, Energy.type, Year, IEAMW, GrossNet, .keep_all = TRUE) %>%
+  dplyr::select(Country, Method, Energy.type, Year, IEAMW, GrossNet, eta_pf, eta_fu, eta_pu) %>%
+  dplyr::rename("Gross.Net" = GrossNet,
+                "IEA.MW" = IEAMW,
+                "Primary-Final" = eta_pf,
+                "Final-Useful" = eta_fu,
+                "Primary-Useful" = eta_pu) %>%
+  tidyr::pivot_longer(cols = c(`Primary-Final`, `Final-Useful`, `Primary-Useful`),
+                      values_to = "Eta",
+                      names_to = "Stages")
+
+AggData <- EtaPFU %>%
+  dplyr::distinct(Country, Method, Energy.type, Year, IEAMW, GrossNet, .keep_all = TRUE) %>%
+  dplyr::select(Country, Method, Energy.type, Year, IEAMW, GrossNet, EX.p, EX.f, EX.u) %>%
+  # dplyr::distinct(Country, Method, Energy.type, Year, IEAMW, GrossNet) %>%
+  dplyr::rename("Gross.Net" = GrossNet,
+                "IEA.MW" = IEAMW,
+                "Primary" = EX.p,
+                "Final" = EX.f,
+                "Useful" = EX.u) %>%
+  tidyr::pivot_longer(cols = c(Primary, Final, Useful),
+                      values_to = "E.dot",
+                      names_to = "Stage") %>%
+  dplyr::mutate(Units = "ktoe", .after = "Stage")
+
+# Rebound space data
+rebound_space_data_prepped <- AggData %>%
+  dplyr::left_join(EtaData,
+                   by = c("Country", "Method", "IEA.MW", "Energy.type", "Gross.Net", "Year"))
 
 
 # Calculate indexed total consumption data
-PSUT_Agg_Re_all_St_pfu_iyear <- PSUT_Agg_Re_all_St_pfu_prepped %>%
-  dplyr::group_by(Country, Method, Energy.type, Stage, Units, Gross.Net) %>%
+AggData_iyear <- AggData %>%
+  dplyr::group_by(Country, Method, Energy.type, IEA.MW, Stage, Gross.Net) %>%
   dplyr::filter(Year == min(Year)) %>%
   dplyr::select(-Year) %>%
   dplyr::rename("E.dot.iyear" = E.dot) %>%
   dplyr::ungroup()
 
-PSUT_Agg_Re_all_St_pfu_i <- PSUT_Agg_Re_all_St_pfu_prepped %>%
-  dplyr::left_join(PSUT_Agg_Re_all_St_pfu_iyear, by = c("Country", "Method", "Energy.type", "Stage", "Units", "Gross.Net")) %>%
-  dplyr::mutate("E.dot.i" = E.dot.iyear/E.dot) %>%
+AggData_i <- AggData %>%
+  dplyr::left_join(AggData_iyear, by = c("Country", "Method", "Energy.type", "IEA.MW", "Stage", "Units", "Gross.Net")) %>%
+  dplyr::mutate("E.dot.i" = E.dot/E.dot.iyear) %>%
   dplyr::select(-E.dot.iyear)
 
 # Calculate indexed total consumption data
-PSUT_Eta_Re_all_St_pfu_iyear <- PSUT_Eta_Re_all_St_pfu_prepped %>%
-  dplyr::group_by(Country, Method, Energy.type, Stages, Gross.Net) %>%
+EtaData_iyear <- EtaData %>%
+  dplyr::group_by(Country, Method, Energy.type, IEA.MW, Stages, Gross.Net) %>%
   dplyr::filter(Year == min(Year)) %>%
   dplyr::select(-Year) %>%
   dplyr::rename("Eta.iyear" = Eta) %>%
   dplyr::ungroup()
 
-PSUT_Eta_Re_all_St_pfu_i <- PSUT_Eta_Re_all_St_pfu_prepped %>%
-  dplyr::left_join(PSUT_Eta_Re_all_St_pfu_iyear, by = c("Country", "Method", "Energy.type", "Stages", "Gross.Net")) %>%
-  dplyr::mutate("Eta.i" = Eta.iyear/Eta) %>%
+EtaData_i <- EtaData %>%
+  dplyr::left_join(EtaData_iyear, by = c("Country", "Method", "Energy.type", "IEA.MW", "Stages", "Gross.Net")) %>%
+  dplyr::mutate("Eta.i" = Eta/Eta.iyear) %>%
   dplyr::select(-Eta.iyear)
 
 # Retrieving country-specific index years
-iyears_psut <- PSUT_Agg_Re_all_St_pfu_prepped %>%
-  dplyr::group_by(Country, Method, Energy.type, Stage, Units, Gross.Net) %>%
+iyears_psut <- AggData %>%
+  dplyr::group_by(Country, Method, Energy.type, Stage, IEA.MW, Units, Gross.Net) %>%
   dplyr::filter(Year == min(Year)) %>%
   dplyr::ungroup() %>%
   dplyr::select(Country, Year) %>%
@@ -98,14 +123,9 @@ iyears_psut <- PSUT_Agg_Re_all_St_pfu_prepped %>%
   # need to be revised
   dplyr::distinct()
 
-
-# Region aggregation map
-agg_map <- exemplar_lists %>%
-  tidyr::unnest(Exemplars) %>%
-  dplyr::filter(Exemplars %in% c("AFRI", "EURP", "MIDE", "SAMR", "ASIA",
-                                 "OCEN", "NAMR", "BUNK")) %>%
-  dplyr::select(-Year) %>%
-  dplyr::distinct()
+################################################################################
+# Prepare economic data
+################################################################################
 
 # Prepare pwt10.0 data
 # Remove rownames
@@ -113,12 +133,13 @@ rownames(pwt10_data) <- NULL
 
 # Select relevant columns and rename columns
 pwt10_data_cleaned <- pwt10_data %>%
-  dplyr::select(isocode, year, rgdpe, rgdpo, rgdpna) %>%
-  dplyr::rename(Country = isocode,
+  dplyr::select(countrycode, year, rgdpe, rgdpo, rgdpna) %>%
+  dplyr::rename(Country = countrycode,
                 Year = year,
                 rgdpe = rgdpe,
                 rgdpo = rgdpo,
-                rgdpna = rgdpna)
+                rgdpna = rgdpna) %>%
+  dplyr::filter(Country %in% countries)
 
 regions_pwt10_data_cleaned <- pwt10_data_cleaned %>%
   dplyr::left_join(agg_map, by = c("Country")) %>%
@@ -217,10 +238,10 @@ econ_data_i <- econ_data_i %>%
 econ_data_gdp <- econ_data_abs %>%
   dplyr::left_join(econ_data_i, by = c("Country", "Year", "GDP_Metric"))
 
-pfuex_econ <- PSUT_Agg_Re_all_St_pfu_i %>%
-  dplyr::left_join(PSUT_Eta_Re_all_St_pfu_i, by = c("Country", "Method", "Energy.type", "Gross.Net", "Year")) %>% # Etas data in Gross terms has already been filtered out.
+pfuex_econ <- AggData_i %>%
+  dplyr::select(-Units) %>%
+  dplyr::left_join(EtaData_i, by = c("Country", "Method", "Energy.type", "IEA.MW", "Gross.Net", "Year")) %>%
   dplyr::left_join(econ_data_gdp, by = c("Country", "Year")) %>%
-  # dplyr::group_by(Country, Method, Energy.type, Gross.Net, GDP_Metric) %>%
   dplyr::mutate("E.dot_intensity" = E.dot / GDP) %>%
   dplyr::mutate("E.dot_intensity.i" = E.dot.i / GDP.i) %>%
   dplyr::ungroup()
