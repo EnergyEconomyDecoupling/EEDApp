@@ -42,42 +42,41 @@ library(Recca)
 library(PFUDatabase)
 
 # Load constants
-source("App-Modules/constants.R", local = TRUE)
+source("Utility/constants.R", local = TRUE)
 
 # Loads bespoke functions for use in the app
-source("App-Modules/utility_functions.R", local = TRUE)
+source("Utility/utility_functions.R", local = TRUE)
 
 # Loads custom theme
-source("App-Modules/customTheme.R", local = TRUE)
+source("Utility/customTheme.R", local = TRUE)
 
 # Loads shiny modules to get and wrangle data
-source("App-Modules/load_data.R", local = TRUE)
-source("App-Modules/prepare_data.R", local = TRUE)
+source("Utility/load_data.R", local = TRUE)
+source("Utility/prepare_data.R", local = TRUE)
 
 # Load main shiny modules
 source("App-Modules/outline.R", local = TRUE)
 source("App-Modules/relresources.R", local = TRUE)
 
 # Load PFU Database modules
-source("App-Modules/intro_pfu.R", local = TRUE)
-source("App-Modules/pfudatabase_dashboard.R", local = TRUE)
-source("App-Modules/pfuex_cons.R", local = TRUE)
-source("App-Modules/pfuex_eta.R", local = TRUE)
-source("App-Modules/allocations.R", local = TRUE)
-source("App-Modules/fu_efficiencies.R", local = TRUE)
+source("App-Modules/PFUDatabase/intro_pfu.R", local = TRUE)
+source("App-Modules/PFUDatabase/pfudatabase_dashboard.R", local = TRUE)
+source("App-Modules/PFUDatabase/pfuex_cons.R", local = TRUE)
+source("App-Modules/PFUDatabase/pfuex_eta.R", local = TRUE)
+source("App-Modules/PFUDatabase/allocations.R", local = TRUE)
+source("App-Modules/PFUDatabase/fu_efficiencies.R", local = TRUE)
+source("App-Modules/PFUDatabase/guides_pfu.R", local = TRUE)
 
 # Load PFU Analysis modules
-source("App-Modules/pfuanalysis_dashboard.R", local = TRUE)
-source("App-Modules/rebound_space.R", local = TRUE)
-source("App-Modules/decoupling_space.R", local = TRUE)
+source("App-Modules/PFUAnalysis/pfuanalysis_dashboard.R", local = TRUE)
+source("App-Modules/PFUAnalysis/rebound_space.R", local = TRUE)
+source("App-Modules/PFUAnalysis/decoupling_space.R", local = TRUE)
 
 # Load Rebound modules
-source("App-Modules/intro_rebound.R", local = TRUE)
-source("App-Modules/rebound_dashboard.R", local = TRUE)
-source("App-Modules/citation_rebound.R", local = TRUE)
+source("App-Modules/Rebound/intro_rebound.R", local = TRUE)
+source("App-Modules/Rebound/rebound_dashboard.R", local = TRUE)
+source("App-Modules/Rebound/citation_rebound.R", local = TRUE)
 
-# Loads cicerone guides
-source("App-Modules/guides_pfu.R", local = TRUE)
 
 ################################################################################
 # UI
